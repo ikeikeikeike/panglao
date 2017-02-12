@@ -1,0 +1,16 @@
+{
+  "name": "panglao",
+  "license": "MIT",
+  "private": true,
+  "homepage": "http://github.com/ikeikeikeike/panglao",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
+}
