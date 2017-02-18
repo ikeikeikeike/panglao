@@ -25,7 +25,9 @@ defmodule Panglao.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Poison
+    json_decoder: Poison,
+    length:       500_000_000, # bytes
+    read_timeout: 300_000  # ms
 
   plug Plug.MethodOverride
   plug Plug.Head

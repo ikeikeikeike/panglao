@@ -3,7 +3,7 @@ defmodule Panglao.Mixfile do
 
   def project do
     [app: :panglao,
-     version: "0.0.1",
+     version: version(),
      elixir: "~> 1.2",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -13,13 +13,41 @@ defmodule Panglao.Mixfile do
      deps: deps()]
   end
 
+  defp version do
+    v = "0.1.0"
+    File.write! "VERSION", v
+    v
+  end
+
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Panglao, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+     applications: [
+       :phoenix,
+       :phoenix_pubsub,
+       :phoenix_html,
+       :cowboy,
+       :logger,
+       :gettext,
+       :phoenix_ecto,
+       :postgrex,
+
+       :yamerl,
+
+       :hackney,
+       :poison,
+
+       :chexes,
+       :common_device_detector,
+       :phoenix_html_simplified_helpers,
+
+       :ex_aws,
+       :arc,
+       :arc_ecto,
+     ]
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,14 +58,30 @@ defmodule Panglao.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.2.1"},
-     {:phoenix_pubsub, "~> 1.0"},
-     {:phoenix_ecto, "~> 3.0"},
-     {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.6"},
-     {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:gettext, "~> 0.11"},
-     {:cowboy, "~> 1.0"}]
+    [
+      {:phoenix, "~> 1.2.1"},
+      {:phoenix_pubsub, "~> 1.0"},
+      {:phoenix_ecto, "~> 3.0"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.6"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:gettext, "~> 0.11"},
+      {:cowboy, "~> 1.0"},
+
+      {:poison, "~> 3.1", override: true},
+      {:yamerl, "~> 0.4", override: true},
+
+      {:arc, "~> 0.7", override: true},
+      {:arc_ecto, "~> 0.5"},
+
+      {:ex_aws, "~> 1.1"},
+      {:hackney, "~> 1.6"},
+      {:sweet_xml, "~> 0.6"},
+
+      {:chexes, github: "ikeikeikeike/chexes"},
+      {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
+      {:phoenix_html_simplified_helpers, "~> 1.1"},
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -47,7 +91,8 @@ defmodule Panglao.Mixfile do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+    ["ecto.setup": [
+      "ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end

@@ -19,6 +19,7 @@ defmodule Panglao.Web do
   def model do
     quote do
       use Ecto.Schema
+      use Chexes.Ecto
 
       import Ecto
       import Ecto.Changeset
@@ -35,6 +36,7 @@ defmodule Panglao.Web do
       import Ecto.Query
 
       import Panglao.Router.Helpers
+      import Panglao.ErrorHelpers
       import Panglao.Helpers
       import Panglao.Gettext
     end
@@ -49,11 +51,15 @@ defmodule Panglao.Web do
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
+      use Phoenix.HTML.SimplifiedHelpers
 
       import Panglao.Router.Helpers
       import Panglao.ErrorHelpers
       import Panglao.Helpers
       import Panglao.Gettext
+
+      import Chexes
+      import CommonDeviceDetector.Detector
     end
   end
 
