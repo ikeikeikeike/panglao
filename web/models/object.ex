@@ -4,9 +4,10 @@ defmodule Panglao.Object do
 
   alias Panglao.{ObjectUploader}
 
-  @derive {Poison.Encoder, only: ~w(src inserted_at updated_at)a}
+  @derive {Poison.Encoder, only: ~w(src stat inserted_at updated_at)a}
   schema "objects" do
     field :src, ObjectUploader.Type
+    field :stat, :string
 
     timestamps()
   end
@@ -14,6 +15,7 @@ defmodule Panglao.Object do
   @castable ~w()a
   @requires ~w()a
   @attaches ~w(src)a
+  @stattypes ~w(PENDING STARTED FAILURE SUCCESS)
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -24,7 +26,7 @@ defmodule Panglao.Object do
     |> validate_required(@requires)
   end
 
-  def tpl_changeset(struct, params \\ %{}) do
+  def object_changeset(struct, params \\ %{}) do
     struct
     |> changeset(params)
     |> cast_attachments(params, @attaches)

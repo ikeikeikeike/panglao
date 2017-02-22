@@ -3,7 +3,8 @@ defmodule Panglao.Repo.Migrations.CreateObject do
 
   def change do
     create table(:objects) do
-      add :src, :string
+      add :src, :text
+      add :stat, :string
 
       timestamps()
     end

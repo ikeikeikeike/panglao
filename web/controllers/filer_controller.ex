@@ -4,7 +4,8 @@ defmodule Panglao.FilerController do
   alias Panglao.Object
 
   def index(conn, _params) do
-    render conn, "index.html"
+    objects = Repo.all Object
+    render conn, "index.html", objects: objects
   end
 
   def upload(conn, %{"src" => [src]}) do
@@ -12,7 +13,7 @@ defmodule Panglao.FilerController do
 
     Repo.transaction(fn  ->
       with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, %{"user_id" => user_id})),
-           {:ok, object} <- Repo.update(Object.tpl_changeset(object, %{"src" => src})) do
+           {:ok, object} <- Repo.update(Object.object_changeset(object, %{"src" => src})) do
         object
       else
         {:error, changeset} -> Repo.rollback changeset

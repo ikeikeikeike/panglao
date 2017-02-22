@@ -1,17 +1,12 @@
 defmodule Panglao.ObjectUploader do
   use Arc.Definition
   use Arc.Ecto.Definition
-
   # require Logger
 
-  @versions [
-    # :original,
-    :screenshot
-  ]
+  @cdnenv Application.get_env(:panglao, :cheapcdn)
+  @versions [:original] # :screenshot
   # @extension_whitelist ~w(.mp4 .flv)
-
-  # @acl :public_read
-  # def acl(:thumb, _), do: :public_read
+  @acl :public_read
 
   def validate({_file, _}) do
     # file_extension = file.file_name |> Path.extname |> String.downcase
@@ -40,31 +35,29 @@ defmodule Panglao.ObjectUploader do
 
   # https://github.com/stavro/arc#s3-object-headers
   def s3_object_headers(_version, {file, _scope}) do
-    [content_type: Plug.MIME.path(file.file_name)] # for "image.png", would produce: "image/png"
+    [content_type: Plug.MIME.path(file.file_name)]
   end
 
-  def __storage, do: Arc.Storage.Local
+  # def __storage, do: Arc.Storage.Local
   # def __storage, do: Arc.Storage.S3
 
-  def filename(version, {file, _model}) do
-    "#{version}_#{file.file_name}"
+  def filename(_version, {file, model}) do
+    "#{Path.basename(file.file_name, Path.extname(file.file_name))}#{model.id}"
   end
 
-  def storage_dir(_version, {_file, model}) do
-    "uploads/#{model.id}"
+  def storage_dir(_version, {_file, _model}) do
+    ""
   end
 
   def default_url(:original) do
     "https://placehold.it/700x800&txt=SAMPLE IMAGE"
   end
 
-  def develop_url({file, scope}, version \\ :original) do
-    case __storage() do
-      Arc.Storage.Local ->
-        Panglao.Endpoint.url <> url({file, scope}, version)
-      Arc.Storage.S3 ->
-        url({file, scope}, version)
-    end
-  end
+  def auth_url({file, scope}, version \\ :original) do
+    opts   = [hackney: [basic_auth: @cdnenv[:auth]]]
+    object = filename(version, {file, scope})
 
+    r = HTTPoison.get!("#{@cdnenv[:gateway]}&object=#{object}", [], opts)
+    "#{url({file, scope}, version)}&cdnkey=#{r.body}"
+  end
 end

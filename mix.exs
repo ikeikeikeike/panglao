@@ -46,6 +46,11 @@ defmodule Panglao.Mixfile do
        :ex_aws,
        :arc,
        :arc_ecto,
+
+       :ffmpex,
+       :thumbnex,
+
+       :exq,
      ]
     ]
   end
@@ -73,6 +78,10 @@ defmodule Panglao.Mixfile do
 
       {:arc, "~> 0.7", override: true},
       {:arc_ecto, "~> 0.5"},
+
+      {:exq, "~> 0.8"},
+      {:ffmpex, "~> 0.4"},
+      {:thumbnex, "~> 0.2"},
 
       {:ex_aws, "~> 1.1"},
       {:hackney, "~> 1.6"},
