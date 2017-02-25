@@ -25,6 +25,9 @@ config :logger, :console,
 config :ua_inspector,
   database_path: Path.join(File.cwd!, "config/ua_inspector")
 
+config :panglao, :redis,
+  lock_in_task: "redis://127.0.0.1:6379/2"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

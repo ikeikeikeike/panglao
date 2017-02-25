@@ -50,7 +50,14 @@ defmodule Panglao.Mixfile do
        :ffmpex,
        :thumbnex,
 
+       :rdtype,
        :exq,
+
+       :csv,
+
+       :comeonin,
+       :ex_crypto,
+
      ]
     ]
   end
@@ -79,7 +86,7 @@ defmodule Panglao.Mixfile do
       {:arc, "~> 0.7", override: true},
       {:arc_ecto, "~> 0.5"},
 
-      {:exq, "~> 0.8"},
+      {:exq, github: "akira/exq"},
       {:ffmpex, "~> 0.4"},
       {:thumbnex, "~> 0.2"},
 
@@ -87,6 +94,13 @@ defmodule Panglao.Mixfile do
       {:hackney, "~> 1.6"},
       {:sweet_xml, "~> 0.6"},
 
+      {:csv, "~> 1.4"},
+
+      # Password hasher
+      {:comeonin, "~> 3.0"},
+      {:ex_crypto, "~> 0.3"},  # Need encrypt and decrypt.
+
+      {:rdtype, "~> 0.4"},
       {:chexes, github: "ikeikeikeike/chexes"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:phoenix_html_simplified_helpers, "~> 1.1"},

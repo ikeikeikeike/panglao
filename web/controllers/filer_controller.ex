@@ -1,7 +1,7 @@
 defmodule Panglao.FilerController do
   use Panglao.Web, :controller
 
-  alias Panglao.Object
+  alias Panglao.{Object, Builders}
 
   def index(conn, _params) do
     objects = Repo.all Object
@@ -12,8 +12,8 @@ defmodule Panglao.FilerController do
     user_id = 0
 
     Repo.transaction(fn  ->
-      with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, %{"user_id" => user_id})),
-           {:ok, object} <- Repo.update(Object.object_changeset(object, %{"src" => src})) do
+      with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, %{"user_id" => user_id, "name" => src.filename})),
+           {:ok, object} <- Repo.update(Object.object_changeset(object, %{"src" => src, "stat" => "PENDING"})) do
         object
       else
         {:error, changeset} -> Repo.rollback changeset
@@ -21,6 +21,8 @@ defmodule Panglao.FilerController do
     end)
     |> case do
       {:ok, object} ->
+        Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
+
         msg = gettext("Sweet! You have exactly a brand new object")
         json conn, %{msg: msg, object: object}
 
