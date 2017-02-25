@@ -26,16 +26,17 @@ defmodule Panglao.Builders.Encode do
   defp encode(queryable) do
     result =
       Enum.map Repo.all(queryable), fn object ->
-        object
-        |> Object.encode_changeset(%{"stat" => "STARTED"})
-        |> Repo.update
+        started object
+        try do
+          arc = Arc.File.new ObjectUploader.develop_url({object.src, object})
+          ObjectUploader.store({low(arc), object})
 
-        arc = Arc.File.new ObjectUploader.develop_url({object.src, object})
-        ObjectUploader.store({low(arc), object})
-
-        object
-        |> Object.encode_changeset(%{"stat" => "SUCCESS"})
-        |> Repo.update
+          success object
+        rescue
+          _ -> failure object
+        catch
+          _ -> failure object
+        end
       end
 
     Enum.map(result, fn
@@ -60,6 +61,24 @@ defmodule Panglao.Builders.Encode do
       path: arc.path,
       filename: arc.file_name,
     }
+  end
+
+  defp started(object) do
+    object
+    |> Object.encode_changeset(%{"stat" => "STARTED"})
+    |> Repo.update
+  end
+
+  defp success(object) do
+    object
+    |> Object.encode_changeset(%{"stat" => "SUCCESS"})
+    |> Repo.update
+  end
+
+  defp failure(object) do
+    object
+    |> Object.encode_changeset(%{"stat" => "FAILURE"})
+    |> Repo.update
   end
 
 end
