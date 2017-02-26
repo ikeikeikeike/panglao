@@ -28,6 +28,10 @@ config :ua_inspector,
 config :panglao, :redis,
   lock_in_task: "redis://127.0.0.1:6379/2"
 
+config :panglao, Panglao.Gettext,
+  default_locale: "ja",
+  locales: ~w(en es ja)
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

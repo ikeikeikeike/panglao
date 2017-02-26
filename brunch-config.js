@@ -42,7 +42,8 @@ exports.config = {
     // Dependencies and current project directories to watch
     watched: [
       "web/static",
-      "test/static"
+      "test/static",
+      "bower_components/jquery.filer/css",
     ],
 
     // Where to compile files to
