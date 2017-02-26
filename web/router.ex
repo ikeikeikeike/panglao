@@ -17,6 +17,10 @@ defmodule Panglao.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/l", PageController, :short
+    get "/link", PageController, :direct
+    get "/embed", PageController, :embed
+    get "/splash", PageController, :splash
   end
 
   scope "/my", Panglao do
@@ -24,6 +28,7 @@ defmodule Panglao.Router do
 
     get "/dashboard", DashboardController, :index
     get "/remote", RemoteController, :index
+    get "/filer", FilerController, :index
     get "/multiple", MultipleController, :index
     get "/ads", AdController, :index
     get "/settings", SettingController, :index
@@ -31,7 +36,6 @@ defmodule Panglao.Router do
     get "/statistics", StatisticController, :index
 
     scope "/filer" do
-      get "/", FilerController, :index
       post "/upload", FilerController, :upload
     end
 
