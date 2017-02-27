@@ -9,20 +9,34 @@ defmodule Panglao.PageController do
     render conn, "index.html"
   end
 
-  def direct(conn, _params) do
-    object =
-      from(q in Object, where: q.id == 10, limit: 1)
-      |> Repo.one
+  def direct(conn, %{"id" => id, "name" => name}) do
+    qs =
+      from q in Object,
+        where: q.id == ^id
+           and q.name == ^name,
+        limit: 1
 
-    render conn, "direct.html", object: object
+    render conn, "direct.html", object: Repo.one!(qs)
   end
 
-  def short(conn, _params) do
-    render conn, "short.html"
+  def short(conn,  %{"id" => id, "slug" => slug}) do
+    qs =
+      from q in Object,
+        where: q.id == ^id
+           and q.slug == ^slug,
+        limit: 1
+
+    render conn, "direct.html", object: Repo.one!(qs)
   end
 
-  def embed(conn, _params) do
-    render conn, "embed.html"
+  def embed(conn, %{"id" => id, "name" => name}) do
+    qs =
+      from q in Object,
+        where: q.id == ^id
+           and q.name == ^name,
+        limit: 1
+
+    render conn, "embed.html", object: Repo.one!(qs)
   end
 
   def splash(conn, _params) do

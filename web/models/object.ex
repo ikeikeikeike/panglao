@@ -2,11 +2,13 @@ defmodule Panglao.Object do
   use Panglao.Web, :model
   use Arc.Ecto.Schema
 
-  alias Panglao.{ObjectUploader}
+  alias Panglao.{ObjectUploader, Hash}
 
   @derive {Poison.Encoder, only: ~w(src stat inserted_at updated_at)a}
   schema "objects" do
     field :name, :string
+    field :slug, :string
+
     field :stat, :string, default: "NONE"
     field :src, ObjectUploader.Type
 
@@ -14,7 +16,7 @@ defmodule Panglao.Object do
   end
 
   @requires ~w(name)a
-  @castable ~w(name stat)a
+  @castable ~w(name stat slug)a
   @attaches ~w(src)a
   @stattypes ~w(NONE PENDING STARTED FAILURE SUCCESS)
 
@@ -30,6 +32,7 @@ defmodule Panglao.Object do
   def object_changeset(struct, params \\ %{}) do
     struct
     |> changeset(params)
+    |> put_change(:slug, Hash.randstring(3))
     |> cast_attachments(params, @attaches)
   end
 

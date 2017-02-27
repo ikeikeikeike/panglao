@@ -17,9 +17,9 @@ defmodule Panglao.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    get "/l", PageController, :short
-    get "/link", PageController, :direct
-    get "/embed", PageController, :embed
+    get "/l/:id/:slug", PageController, :short
+    get "/link/:id/:name", PageController, :direct
+    get "/embed/:id/:name", PageController, :embed
     get "/splash", PageController, :splash
   end
 
