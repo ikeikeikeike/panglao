@@ -9,6 +9,13 @@ defmodule Panglao.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :embedable do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -19,8 +26,13 @@ defmodule Panglao.Router do
     get "/", PageController, :index
     get "/l/:id/:slug", PageController, :short
     get "/link/:id/:name", PageController, :direct
-    get "/embed/:id/:name", PageController, :embed
     get "/splash", PageController, :splash
+  end
+
+  scope "/", Panglao do
+    pipe_through :embedable # Use the default browser stack
+
+    get "/embed/:id/:name", PageController, :embed
   end
 
   scope "/my", Panglao do

@@ -35,8 +35,9 @@ defmodule Panglao.PageController do
         where: q.id == ^id
            and q.name == ^name,
         limit: 1
-
-    render conn, "embed.html", object: Repo.one!(qs)
+    conn
+    |> put_resp_header("X-Frame-Options", "ALLOWALL")
+    |> render("embed.html", object: Repo.one!(qs))
   end
 
   def splash(conn, _params) do

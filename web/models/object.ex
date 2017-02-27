@@ -4,7 +4,7 @@ defmodule Panglao.Object do
 
   alias Panglao.{ObjectUploader, Hash}
 
-  @derive {Poison.Encoder, only: ~w(src stat inserted_at updated_at)a}
+  @derive {Poison.Encoder, only: ~w(name slug stat src inserted_at updated_at)a}
   schema "objects" do
     field :name, :string
     field :slug, :string
