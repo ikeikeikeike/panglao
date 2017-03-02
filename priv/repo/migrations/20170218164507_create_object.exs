@@ -5,6 +5,7 @@ defmodule Panglao.Repo.Migrations.CreateObject do
     create table(:objects) do
       add :name, :string
       add :slug, :string
+      add :remote, :string
       add :stat, :string
       add :src, :text
 

@@ -8,6 +8,7 @@ defmodule Panglao.Object do
   schema "objects" do
     field :name, :string
     field :slug, :string
+    field :remote, :string
 
     field :stat, :string, default: "NONE"
     field :src, ObjectUploader.Type
@@ -15,12 +16,12 @@ defmodule Panglao.Object do
     timestamps()
   end
 
-  @requires ~w(name)a
-  @castable ~w(name stat slug)a
+  @requires ~w()a
+  @castable ~w(name stat slug remote)a
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD
+    REMOTE DOWNLOAD DOWNLOADED
     PENDING STARTED FAILURE SUCCESS
   )
 
@@ -36,8 +37,17 @@ defmodule Panglao.Object do
   def remote_changeset(struct, params \\ %{}) do
     struct
     |> changeset(params)
+    |> validate_required(~w(remote)a)
     |> put_change(:stat, "REMOTE")
     |> put_change(:slug, Hash.randstring(3))
+  end
+
+  def download_changeset(struct, params \\ %{}) do
+    struct
+    |> changeset(params)
+    |> validate_required(~w(remote)a)
+    |> put_change(:name, Path.basename params["remote"])
+    |> put_change(:stat, "DOWNLOAD")
   end
 
   def object_changeset(struct, params \\ %{}) do
@@ -81,6 +91,16 @@ defmodule Panglao.Object do
   def with_success(query \\ __MODULE__) do
     from q in query,
     where: q.stat == "SUCCESS"
+  end
+
+  def with_remote(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat in ~w(REMOTE DOWNLOAD)
+  end
+
+  def with_filer(query \\ __MODULE__) do
+    from q in query,
+    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOADED)
   end
 
 end
