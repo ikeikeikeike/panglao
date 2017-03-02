@@ -35,9 +35,9 @@ defmodule Panglao.Mixfile do
        :postgrex,
 
        :yamerl,
-
        :hackney,
        :poison,
+       :httpoison,
 
        :chexes,
        :common_device_detector,
@@ -82,6 +82,8 @@ defmodule Panglao.Mixfile do
 
       {:poison, "~> 3.1", override: true},
       {:yamerl, "~> 0.4", override: true},
+      {:hackney, "~> 1.6", override: true},
+      {:httpoison, "~> 0.11.1"},
 
       {:arc, "~> 0.7", override: true},
       {:arc_ecto, "~> 0.5"},
@@ -91,7 +93,6 @@ defmodule Panglao.Mixfile do
       {:thumbnex, "~> 0.2"},
 
       {:ex_aws, "~> 1.1"},
-      {:hackney, "~> 1.6"},
       {:sweet_xml, "~> 0.6"},
 
       {:csv, "~> 1.4"},

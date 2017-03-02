@@ -13,7 +13,7 @@ defmodule Panglao.FilerController do
 
     Repo.transaction(fn  ->
       with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, %{"user_id" => user_id, "name" => src.filename})),
-           {:ok, object} <- Repo.update(Object.object_changeset(object, %{"src" => src, "stat" => "PENDING"})) do
+           {:ok, object} <- Repo.update(Object.object_changeset(object, %{"src" => src})) do
         object
       else
         {:error, changeset} -> Repo.rollback changeset

@@ -18,7 +18,11 @@ defmodule Panglao.Object do
   @requires ~w(name)a
   @castable ~w(name stat slug)a
   @attaches ~w(src)a
-  @stattypes ~w(NONE PENDING STARTED FAILURE SUCCESS)
+  @stattypes ~w(
+    NONE
+    REMOTE DOWNLOAD
+    PENDING STARTED FAILURE SUCCESS
+  )
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -29,9 +33,17 @@ defmodule Panglao.Object do
     |> validate_required(@requires)
   end
 
+  def remote_changeset(struct, params \\ %{}) do
+    struct
+    |> changeset(params)
+    |> put_change(:stat, "REMOTE")
+    |> put_change(:slug, Hash.randstring(3))
+  end
+
   def object_changeset(struct, params \\ %{}) do
     struct
     |> changeset(params)
+    |> put_change(:stat, "PENDING")
     |> put_change(:slug, Hash.randstring(3))
     |> cast_attachments(params, @attaches)
   end

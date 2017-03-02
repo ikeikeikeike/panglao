@@ -51,7 +51,7 @@ defmodule Panglao.Builders.Encode do
 
   defp low(arc) do
     out  = "#{arc.path}.encode.mp4"
-    args = ["-y", "-i", arc.path, "-vcodec", "libx264", "-crf", "29", out]
+    args = ["-y", "-i", arc.path, "-vcodec", "libx264", "-crf", "28", out]
 
     System.cmd "ffmpeg", args, stderr_to_stdout: true
     File.copy out, arc.path

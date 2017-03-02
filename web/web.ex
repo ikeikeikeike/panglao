@@ -39,6 +39,8 @@ defmodule Panglao.Web do
       import Panglao.ErrorHelpers
       import Panglao.Helpers
       import Panglao.Gettext
+
+      import Chexes
     end
   end
 

@@ -50,6 +50,9 @@ defmodule Panglao.Router do
     scope "/filer" do
       post "/upload", FilerController, :upload
     end
+    scope "/remote" do
+      post "/upload", RemoteController, :upload
+    end
 
   end
 
