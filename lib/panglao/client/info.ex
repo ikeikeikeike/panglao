@@ -20,7 +20,6 @@ defmodule Panglao.Client.Info do
   def process_response_body(body) do
     body
     |> Poison.decode!
-    |> Enum.map(fn({k, v}) -> {:"#{k}", v} end)
   end
 
 end

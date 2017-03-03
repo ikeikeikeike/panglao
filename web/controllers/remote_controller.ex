@@ -12,6 +12,7 @@ defmodule Panglao.RemoteController do
     case Progress.get(remote) do
       {:ok, r} ->
         json conn, Enum.into(r.body, %{})
+
       _        ->
         json conn, %{}
     end
