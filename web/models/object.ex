@@ -93,6 +93,16 @@ defmodule Panglao.Object do
     where: q.stat == "SUCCESS"
   end
 
+  def with_download(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "DOWNLOAD"
+  end
+
+  def with_downloaded(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "DOWNLOADED"
+  end
+
   def with_remote(query \\ __MODULE__) do
     from q in query,
     where: q.stat in ~w(REMOTE DOWNLOAD)

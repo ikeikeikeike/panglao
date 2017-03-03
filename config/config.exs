@@ -36,4 +36,5 @@ config :panglao, Panglao.Gettext,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
 import_config "#{Mix.env}.secret.exs"
+import_config "schedule.#{Mix.env}.exs"
 import_config "consts.secret.exs"

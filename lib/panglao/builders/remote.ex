@@ -5,24 +5,12 @@ defmodule Panglao.Builders.Remote do
   alias Panglao.{Repo, Object, Object.Basic, Builders, Client.Progress}
 
   def perform do
-    Repo.transaction fn ->
-      Enum.each downloaded(), fn object ->
-        src = %Plug.Upload{path: object.remote, filename: object.name}
-
-        Basic.upload(object, %{"src" => src})
-        |> case do
-          {:ok, object} ->
-            Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
-
-          {:error, changeset} ->
-            Repo.rollback changeset
-          end
-      end
-    end
+    upload downloaded()
+    upload Repo.all(Object.with_downloaded)
   end
 
   defp downloaded do
-    objects = Repo.all from(q in Object.with_remote, where: q.stat == "DOWNLOAD")
+    objects = Repo.all Object.with_download
 
     Enum.map(objects, fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.remote),
@@ -34,6 +22,26 @@ defmodule Panglao.Builders.Remote do
       %Object{stat: "DOWNLOADED"} -> true
       _ -> false
     end)
+  end
+
+  defp upload(objects) do
+    Enum.map objects, fn object ->
+      Repo.transaction fn ->
+        src = %Plug.Upload{
+          content_type: nil, filename: object.name,
+          path: Panglao.File.store_temporary(File.read!(object.remote)),
+        }
+
+        Basic.upload(object, %{"src" => src})
+        |> case do
+          {:ok, object} ->
+            Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
+
+          {:error, changeset} ->
+            Repo.rollback changeset
+          end
+      end
+    end
   end
 
 end

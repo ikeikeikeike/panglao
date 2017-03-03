@@ -24,7 +24,7 @@ defmodule Panglao.ObjectUploader do
   # def __storage, do: Arc.Storage.S3
 
   def filename(_version, {file, _model}) do
-    "#{Path.basename(file.file_name, Path.extname(file.file_name))}"
+    Hash.short "#{Path.basename(file.file_name, Path.extname(file.file_name))}"
   end
 
   def storage_dir(_version, {_file, model}) do
@@ -32,7 +32,9 @@ defmodule Panglao.ObjectUploader do
   end
 
   defp joinpath(version, {file, scope}) do
-    Path.join storage_dir(version, {file, scope}), file.file_name
+    dir = storage_dir version, {file, scope}
+    name = filename version, {file, scope}
+    Path.join dir, [name, Path.extname(file.file_name)]
   end
 
   def default_url(:original) do

@@ -24,7 +24,7 @@ defmodule Panglao.RemoteController do
 
     results =
       Enum.map remotes, fn remote ->
-        params = %{"user_id" => user_id, "remote" => remote}
+        params = %{"user_id" => user_id, "remote" => String.trim(remote)}
         Remote.upload params
       end
 

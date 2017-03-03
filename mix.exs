@@ -50,6 +50,8 @@ defmodule Panglao.Mixfile do
        :ffmpex,
        :thumbnex,
 
+       :quantum,
+
        :rdtype,
        :exq,
 
@@ -91,6 +93,8 @@ defmodule Panglao.Mixfile do
       {:exq, github: "akira/exq"},
       {:ffmpex, "~> 0.4"},
       {:thumbnex, "~> 0.2"},
+
+      {:quantum, ">= 1.9.0"},
 
       {:ex_aws, "~> 1.1"},
       {:sweet_xml, "~> 0.6"},
