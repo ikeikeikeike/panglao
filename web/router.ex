@@ -14,7 +14,7 @@ defmodule Panglao.Router do
     plug Guardian.Plug.LoadResource
   end
 
-  pipeline :login_required do
+  pipeline :browser_required do
     plug Guardian.Plug.EnsureAuthenticated, handler: Panglao.ErrorController
     plug Panglao.Plug.CurrentUser
   end
@@ -27,7 +27,17 @@ defmodule Panglao.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "image", "html"]
+  end
+
+  pipeline :api_auth do
+    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    plug Guardian.Plug.LoadResource
+  end
+
+  pipeline :api_required do
+    plug Guardian.Plug.EnsureAuthenticated, handler: Panglao.Api.ErrorController
+    plug Panglao.Plug.CurrentUser
   end
 
   scope "/", Panglao do
@@ -58,7 +68,7 @@ defmodule Panglao.Router do
   end
 
   scope "/my", Panglao do
-    pipe_through [:browser, :browser_auth, :login_required] # Use the default browser stack
+    pipe_through [:browser, :browser_auth, :browser_required] # Use the default browser stack
 
     get "/", DashboardController, :index
     get "/dashboard", DashboardController, :index
@@ -76,6 +86,38 @@ defmodule Panglao.Router do
       get  "/", RemoteController, :index
       get  "/progress", RemoteController, :progress
       post "/upload", RemoteController, :upload
+    end
+  end
+
+  # TODO: These endpoints have to port to Golang system or OpenResty(Redis) system someday.
+  scope "/1", Panglao.Api.V1, as: "api_v1" do
+    pipe_through [:api, :api_auth]
+
+    scope "/" do
+      get "/", GeneralController, :info
+    end
+
+    scope "/user" do
+      pipe_through [:api_required]
+
+      get "/info", UserController, :info
+    end
+
+    scope "/object" do
+      pipe_through [:api_required]
+
+      get "/link", ObjectController, :link
+      get "/info", ObjectController, :info
+      get "/rename", ObjectController, :rename
+      get "/upload", ObjectController, :upload
+      get "/splash", ObjectController, :splash
+    end
+
+    scope "/remote" do
+      pipe_through [:api_required]
+
+      get "/upload", RemoteController, :upload
+      get "/status", RemoteController, :status
     end
   end
 

@@ -3,8 +3,6 @@ defmodule Panglao.FilerController do
 
   alias Panglao.{Object, Object.Basic, Builders}
 
-  plug Panglao.Plug.CurrentUser
-
   def index(conn, _params) do
     objects = Repo.all Object.with_filer
     render conn, "index.html", objects: objects
