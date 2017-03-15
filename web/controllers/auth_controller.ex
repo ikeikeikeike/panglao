@@ -27,12 +27,16 @@ defmodule Panglao.AuthController do
         conn
         |> put_flash(:info, gettext("Signed in as %{id}", id: user.email))
         |> Guardian.Plug.sign_in(user, :token, perms: %{default: Guardian.Permissions.max})
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: dashboard_path(conn, :index))
       {:error, reason} ->
         conn
-        |> put_flash(:error, gettext("Could not authenticate: %{reason}", reason: reason))
+        |> put_flash(:error, gettext("Could not authenticate<br/>%{reason}", reason: translate_default("#{reason}")))
         |> render("login.html", current_user: current_user, current_auths: auths(current_user))
     end
+  end
+  def callback(%Plug.Conn{} = conn, _params, _current_user, _claims) do
+    conn
+    |> redirect(to: auth_path(conn, :login, "identity"))
   end
 
   def credentials(conn, _, nil, _) do

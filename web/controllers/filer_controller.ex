@@ -3,13 +3,15 @@ defmodule Panglao.FilerController do
 
   alias Panglao.{Object, Object.Basic, Builders}
 
+  plug Panglao.Plug.CurrentUser
+
   def index(conn, _params) do
     objects = Repo.all Object.with_filer
     render conn, "index.html", objects: objects
   end
 
   def upload(conn, %{"src" => [src]}) do
-    user_id = 0
+    user_id = conn.assings.current_user.id
 
     %{"user_id" => user_id, "name" => src.filename, "src" => src}
     |> Basic.upload

@@ -46,7 +46,19 @@ defmodule Panglao.Router do
   end
 
   scope "/my", Panglao do
-    pipe_through [:browser, :browser_auth] # Use the default browser stack
+    pipe_through [:browser, :browser_auth]
+
+    scope "/auth" do
+      get "/signup", AuthController, :signup
+      get "/logout", AuthController, :logout
+      get "/:identity", AuthController, :login
+      get "/:identity/callback", AuthController, :callback
+      post "/identity/callback", AuthController, :callback
+    end
+  end
+
+  scope "/my", Panglao do
+    pipe_through [:browser, :browser_auth, :login_required] # Use the default browser stack
 
     get "/", DashboardController, :index
     get "/dashboard", DashboardController, :index
@@ -64,13 +76,6 @@ defmodule Panglao.Router do
       get  "/", RemoteController, :index
       get  "/progress", RemoteController, :progress
       post "/upload", RemoteController, :upload
-    end
-
-    scope "/auth" do
-      get "/signup", AuthController, :signup
-      get "/:identity", AuthController, :login
-      get "/:identity/callback", AuthController, :callback
-      post "/:identity/callback", AuthController, :callback
     end
   end
 

@@ -1,8 +1,7 @@
 defmodule Panglao.UserFromAuth do
   # import Panglao.Gettext
 
-  alias Panglao.User
-  alias Panglao.Authorization
+  alias Panglao.{User, Authorization, Hash}
   alias Ueberauth.Auth
 
   require Logger
@@ -124,10 +123,16 @@ defmodule Panglao.UserFromAuth do
   end
 
   defp create_user(auth, repo) do
-    name = name_from_auth(auth)
+    name   = name_from_auth(auth)
+    params = %{
+      name: name,
+      email: auth.info.email,
+      access_token: Hash.randstring(20),
+      access_secret: Hash.randstring(20),
+    }
 
     %User{}
-    |> User.registration_changeset(scrub(%{email: auth.info.email, name: name}))
+    |> User.registration_changeset(scrub(params))
     |> repo.insert
     |> case do
       {:ok, user}      -> user
@@ -230,12 +235,11 @@ defmodule Panglao.UserFromAuth do
 
   # We don't have any nested structures in our params that we are using scrub with so this is a very simple scrub
   defp scrub(params) do
-    result = Enum.filter(params, fn
+    Enum.filter(params, fn
       {_key, val} when is_binary(val) -> String.strip(val) != ""
       {_key, val} when is_nil(val)    -> false
       _ -> true
     end)
     |> Enum.into(%{})
-    result
   end
 end

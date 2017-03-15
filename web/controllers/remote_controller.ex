@@ -3,6 +3,8 @@ defmodule Panglao.RemoteController do
 
   alias Panglao.{Object, Object.Remote, Client.Progress}
 
+  plug Panglao.Plug.CurrentUser
+
   def index(conn, _params) do
     objects = Repo.all Object.with_remote
     render conn, "index.html", objects: objects
@@ -19,7 +21,7 @@ defmodule Panglao.RemoteController do
   end
 
   def upload(conn, %{"message" => message}) do
-    user_id  = 0
+    user_id  = conn.assings.current_user.id
     remotes  = String.split message, "\n"
 
     results =
