@@ -9,6 +9,16 @@ defmodule Panglao.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :browser_auth do
+    plug Guardian.Plug.VerifySession
+    plug Guardian.Plug.LoadResource
+  end
+
+  pipeline :login_required do
+    plug Guardian.Plug.EnsureAuthenticated, handler: Panglao.ErrorController
+    plug Panglao.Plug.CurrentUser
+  end
+
   pipeline :embedable do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -36,8 +46,9 @@ defmodule Panglao.Router do
   end
 
   scope "/my", Panglao do
-    pipe_through :browser # Use the default browser stack
+    pipe_through [:browser, :browser_auth] # Use the default browser stack
 
+    get "/", DashboardController, :index
     get "/dashboard", DashboardController, :index
     get "/multiple", MultipleController, :index
     get "/ads", AdController, :index
@@ -55,6 +66,12 @@ defmodule Panglao.Router do
       post "/upload", RemoteController, :upload
     end
 
+    scope "/auth" do
+      get "/signup", AuthController, :signup
+      get "/:identity", AuthController, :login
+      get "/:identity/callback", AuthController, :callback
+      post "/:identity/callback", AuthController, :callback
+    end
   end
 
   # Other scopes may use custom stacks.

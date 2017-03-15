@@ -24,12 +24,15 @@ defmodule Panglao.Web do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      import Panglao.Gettext
     end
   end
 
   def controller do
     quote do
       use Phoenix.Controller
+      alias Guardian.Plug.EnsureAuthenticated
+      alias Guardian.Plug.EnsurePermissions
 
       alias Panglao.Repo
       import Ecto
@@ -39,7 +42,21 @@ defmodule Panglao.Web do
       import Panglao.ErrorHelpers
       import Panglao.Helpers
       import Panglao.Gettext
+      import Chexes
+    end
+  end
 
+  def api do
+    quote do
+      use Phoenix.Controller
+
+      alias Panglao.Repo
+      import Ecto
+      import Ecto.Query
+
+      import Panglao.Router.Helpers
+      import Panglao.Helpers
+      import Panglao.Gettext
       import Chexes
     end
   end
@@ -50,10 +67,14 @@ defmodule Panglao.Web do
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1, action_name: 1]
+      import Plug.Conn, only: [put_session: 3, get_session: 2, delete_session: 2, assign: 3]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
       use Phoenix.HTML.SimplifiedHelpers
+
+      alias Phoenix.Repo
+      import Ecto.Query
 
       import Panglao.Router.Helpers
       import Panglao.ErrorHelpers

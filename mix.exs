@@ -60,6 +60,9 @@ defmodule Panglao.Mixfile do
        :comeonin,
        :ex_crypto,
 
+       :guardian, :guardian_db,
+       :ueberauth, :ueberauth_identity,
+       # :ueberauth_github, :ueberauth_facebook, :ueberauth_google, :ueberauth_twitter, :ueberauth_slack
      ]
     ]
   end
@@ -87,8 +90,10 @@ defmodule Panglao.Mixfile do
       {:hackney, "~> 1.6", override: true},
       {:httpoison, "~> 0.11.1"},
 
+      {:ex_aws, "~> 1.1"},
       {:arc, "~> 0.7", override: true},
       {:arc_ecto, "~> 0.5"},
+      {:sweet_xml, "~> 0.6"},
 
       {:exq, github: "akira/exq"},
       {:ffmpex, "~> 0.4"},
@@ -96,8 +101,17 @@ defmodule Panglao.Mixfile do
 
       {:quantum, ">= 1.9.0"},
 
-      {:ex_aws, "~> 1.1"},
-      {:sweet_xml, "~> 0.6"},
+      # Authenticate
+      {:guardian, "~> 0.14"},
+      {:guardian_db, "~> 0.8"},
+      {:ueberauth, "~> 0.4"},
+      {:ueberauth_identity, "~> 0.2"},
+      # {:ueberauth_facebook, "~> 0.6"},
+      # {:ueberauth_google, "~> 0.5"},
+      # {:ueberauth_github, "~> 0.4"},
+      # {:ueberauth_twitter, "~> 0.2"},
+      # {:ueberauth_slack, "~> 0.4"},
+      # end more: https://hex.pm/packages?search=ueberauth&sort=downloads
 
       {:csv, "~> 1.4"},
 
