@@ -4,15 +4,14 @@ defmodule Panglao.User do
   schema "users" do
     has_many :authorizations, Panglao.Authorization
 
+    field :name, :string
     field :email, :string
-    field :access_token, :string
-    field :access_secret, :string
 
     timestamps()
   end
 
   @required ~w(email)a
-  @castable ~w(email access_token access_secret)a
+  @castable ~w(email name)a
 
   def changeset(struct, params \\ %{}) do
     struct

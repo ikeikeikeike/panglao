@@ -90,12 +90,17 @@ defmodule Panglao.Router do
   end
 
   # TODO: These endpoints have to port to Golang system or OpenResty(Redis) system someday.
+
+  scope "/1", Panglao.Api.V1, as: "api_v1" do
+    pipe_through [:api]
+
+    scope "/auth" do
+      post "/login", AuthController, :login
+    end
+  end
+
   scope "/1", Panglao.Api.V1, as: "api_v1" do
     pipe_through [:api, :api_auth]
-
-    scope "/" do
-      get "/", GeneralController, :info
-    end
 
     scope "/user" do
       pipe_through [:api_required]

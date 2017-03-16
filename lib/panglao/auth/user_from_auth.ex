@@ -1,10 +1,24 @@
 defmodule Panglao.UserFromAuth do
   # import Panglao.Gettext
 
-  alias Panglao.{User, Authorization, Hash}
+  alias Panglao.{User, Authorization}
   alias Ueberauth.Auth
 
   require Logger
+
+  def get_user(auth, current_user, repo) do
+    case auth_and_validate(auth, repo) do
+      {:error, reason}     ->
+        {:error, reason}
+
+      authorization        ->
+        if authorization.expires_at && authorization.expires_at < Guardian.Utils.timestamp do
+          replace_authorization(authorization, auth, current_user, repo)
+        else
+          user_from_authorization(authorization, current_user, repo)
+        end
+    end
+  end
 
   def get_or_insert(auth, current_user, repo) do
     case auth_and_validate(auth, repo) do
@@ -12,7 +26,7 @@ defmodule Panglao.UserFromAuth do
         register_user_from_auth(auth, current_user, repo)
 
       {:error, reason}     ->
-        {:error, reason}  # TODO: change translation to error message(reason) from gettext here.
+        {:error, reason}
 
       authorization        ->
         if authorization.expires_at && authorization.expires_at < Guardian.Utils.timestamp do
@@ -127,8 +141,6 @@ defmodule Panglao.UserFromAuth do
     params = %{
       name: name,
       email: auth.info.email,
-      access_token: Hash.randstring(20),
-      access_secret: Hash.randstring(20),
     }
 
     %User{}
@@ -156,7 +168,7 @@ defmodule Panglao.UserFromAuth do
     end
   end
 
-  defp auth_and_validate(%{provider: service} = auth, repo)  when service in [:google, :facebook] do
+  defp auth_and_validate(%{provider: provider} = auth, repo)  when provider in [:google, :facebook] do
     case repo.get_by(Authorization, uid: uid_from_auth(auth), provider: to_string(auth.provider)) do
       nil -> {:error, :not_found}
       authorization ->

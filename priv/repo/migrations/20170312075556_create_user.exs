@@ -33,11 +33,7 @@ defmodule Panglao.Repo.Migrations.CreateUser do
       # add :unlock_token, :string    # Only if unlock strategy is :email or :both
       # add :locked_at, :datetime
 
-      ## Apiable
-      add :access_token, :string
-      add :access_secret, :string
-
-      timestamps
+      timestamps()
     end
     create unique_index(:users, [:email])
 
