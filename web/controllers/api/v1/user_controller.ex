@@ -1,9 +1,8 @@
 defmodule Panglao.Api.V1.UserController do
   use Panglao.Web, :controller
 
-  plug Panglao.Plug.CurrentUser
-
-  def index(conn, _params) do
-    render conn, "index.html"
+  def info(conn, _params) do
+    user = conn.assigns.current_user
+    json conn, user.id
   end
 end

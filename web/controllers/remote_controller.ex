@@ -19,7 +19,7 @@ defmodule Panglao.RemoteController do
   end
 
   def upload(conn, %{"message" => message}) do
-    user_id  = conn.assings.current_user.id
+    user_id  = conn.assigns.current_user.id
     remotes  = String.split message, "\n"
 
     results =

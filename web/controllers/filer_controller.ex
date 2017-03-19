@@ -9,7 +9,7 @@ defmodule Panglao.FilerController do
   end
 
   def upload(conn, %{"src" => [src]}) do
-    user_id = conn.assings.current_user.id
+    user_id = conn.assigns.current_user.id
 
     %{"user_id" => user_id, "name" => src.filename, "src" => src}
     |> Basic.upload

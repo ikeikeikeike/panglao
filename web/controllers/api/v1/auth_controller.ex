@@ -1,7 +1,7 @@
 defmodule Panglao.Api.V1.AuthController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Repo, User, UserFromAuth}
+  alias Panglao.{Repo, UserFromAuth}
 
   plug Ueberauth
 
