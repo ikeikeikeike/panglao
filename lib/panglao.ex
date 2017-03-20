@@ -14,6 +14,8 @@ defmodule Panglao do
       supervisor(Panglao.Endpoint, []),
       # Start your own worker by calling: Panglao.Worker.start_link(arg1, arg2, arg3)
       # worker(Panglao.Worker, [arg1, arg2, arg3]),
+
+      worker(GuardianDb.ExpiredSweeper, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

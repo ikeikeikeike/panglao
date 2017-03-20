@@ -18,8 +18,10 @@ defmodule Panglao.Client.Download do
   end
 
   def process_response_body(body) do
-    body
-    |> Poison.decode!
+    case Poison.decode body do
+      {:ok,    body} -> body
+      {:error, body} -> body
+    end
   end
 
 end

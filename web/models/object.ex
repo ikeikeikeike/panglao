@@ -8,6 +8,8 @@ defmodule Panglao.Object do
   schema "objects" do
     field :name, :string
     field :slug, :string
+
+    field :url, :string
     field :remote, :string
 
     field :stat, :string, default: "NONE"
@@ -17,13 +19,21 @@ defmodule Panglao.Object do
   end
 
   @requires ~w()a
-  @castable ~w(name stat slug remote)a
+  @castable ~w(name stat slug remote url)a
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
     REMOTE DOWNLOAD DOWNLOADED
     PENDING STARTED FAILURE SUCCESS
   )
+
+  def remote?(struct) do
+    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOADED)
+  end
+
+  def object?(struct) do
+    struct.stat in ~w(PENDING STARTED FAILURE SUCCESS)
+  end
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -39,6 +49,7 @@ defmodule Panglao.Object do
     |> changeset(params)
     |> validate_required(~w(remote)a)
     |> put_change(:stat, "REMOTE")
+    |> put_change(:url, params["remote"])
     |> put_change(:slug, Hash.randstring(3))
   end
 

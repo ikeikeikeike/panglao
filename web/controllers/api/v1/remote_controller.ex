@@ -22,6 +22,7 @@ defmodule Panglao.Api.V1.RemoteController do
           status_id: Hash.encrypt(object.id),
           name: object.name,
           created: object.inserted_at,
+          updated: object.updated_at,
         }
     end
   end

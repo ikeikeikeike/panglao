@@ -6,6 +6,8 @@ defmodule Panglao.Builders.Encode do
 
   require Logger
 
+  @config Application.get_env(:panglao, :convert)
+
   def perform(id) do
     queryable =
       from q in Object.with_base,
@@ -27,9 +29,12 @@ defmodule Panglao.Builders.Encode do
     result =
       Enum.map Repo.all(queryable), fn object ->
         started object
+
         try do
-          arc = Arc.File.new ObjectUploader.develop_url({object.src, object})
-          ObjectUploader.store({low(arc), object})
+          if @config[:encode] do
+            url = ObjectUploader.develop_url({object.src, object})
+            ObjectUploader.store({low(Arc.File.new(url)), object})
+          end
 
           success object
         rescue

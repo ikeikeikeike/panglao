@@ -28,6 +28,9 @@ config :ua_inspector,
 config :panglao, :redis,
   lock_in_task: "redis://127.0.0.1:6379/2"
 
+config :panglao, :convert,
+  encode: false
+
 config :panglao, Panglao.Gettext,
   default_locale: "ja",
   locales: ~w(en es ja)

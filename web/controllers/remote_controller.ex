@@ -39,8 +39,15 @@ defmodule Panglao.RemoteController do
         {:error, message} ->
           "#{message}"
 
-        _ ->
-          ""
+        {:ok, object} ->
+          cond do
+            Object.remote?(object) ->
+              ""
+            Object.object?(object) ->
+              ""
+            true ->
+              ""
+          end
       end
 
     conn =

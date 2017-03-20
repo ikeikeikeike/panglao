@@ -2,7 +2,15 @@ defmodule Panglao.Object.Remote do
 
   alias Panglao.{Repo, Object, Client}
 
-  def upload(params) do
+  def upload(%{"remote" => remote} = params) do
+    case Repo.get_by(Object, url: remote) do
+      nil ->
+        upfile params
+      object ->
+        {:ok, object}
+    end
+  end
+  defp upfile(params) do
     body =
       case Client.Info.get(params["remote"]) do
         {:ok, %HTTPoison.Response{status_code: 200} = r} ->
