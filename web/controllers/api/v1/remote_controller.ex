@@ -36,6 +36,14 @@ defmodule Panglao.Api.V1.RemoteController do
         raise Ecto.NoResultsError
       end
 
+    progress conn, o
+  end
+
+  def status(conn, %{"url" => url}) do
+    progress conn, Repo.get_by!(Object, url: url)
+  end
+
+  defp progress(conn, o) do
     case Progress.get(o.remote) do
       {:ok, %{body: b}} ->
         json conn, %{
@@ -51,7 +59,6 @@ defmodule Panglao.Api.V1.RemoteController do
       _ ->
         json conn, %{}
     end
-
   end
 
 end

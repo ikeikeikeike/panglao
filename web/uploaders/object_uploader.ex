@@ -17,14 +17,14 @@ defmodule Panglao.ObjectUploader do
 
   # https://github.com/stavro/arc#s3-object-headers
   def s3_object_headers(_version, {file, _scope}) do
-    [content_type: Plug.MIME.path(file.file_name)]
+    [content_type: Plug.MIME.path(compatible_name(file))]
   end
 
   # def __storage, do: Arc.Storage.Local
   # def __storage, do: Arc.Storage.S3
 
   def filename(_version, {file, _model}) do
-    Hash.short "#{Path.basename(file.file_name, Path.extname(file.file_name))}"
+    Hash.short "#{Path.basename(compatible_name(file), Path.extname(compatible_name(file)))}"
   end
 
   def storage_dir(_version, {_file, model}) do
@@ -34,7 +34,7 @@ defmodule Panglao.ObjectUploader do
   defp joinpath(version, {file, scope}) do
     dir = storage_dir version, {file, scope}
     name = filename version, {file, scope}
-    Path.join dir, [name, Path.extname(file.file_name)]
+    Path.join dir, [name, Path.extname(compatible_name(file))]
   end
 
   def default_url(:original) do
@@ -51,6 +51,10 @@ defmodule Panglao.ObjectUploader do
 
     r = HTTPoison.get!("#{@cdnenv[:gateway]}&object=#{object}", [], opts)
     "#{url({file, scope}, version)}&cdnkey=#{r.body}"
+  end
+
+  defp compatible_name(file) do
+    Map.get file, :file_name, Map.get(file, :filename)
   end
 
 end

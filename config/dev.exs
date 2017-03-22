@@ -41,4 +41,7 @@ config :panglao, Panglao.Repo,
   password: "postgres",
   database: "panglao_dev",
   hostname: "localhost",
-  pool_size: 10
+  pool_size: 10,
+  timeout: 30_000,
+  pool_timeout: 30_000,
+  ownership_timeout: 30_000

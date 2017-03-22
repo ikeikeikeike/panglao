@@ -15,6 +15,7 @@ defmodule Panglao.Repo.Migrations.CreateObject do
     create index(:objects, [:name])
     create index(:objects, [:slug])
     create index(:objects, [:stat])
+    create index(:objects, [:url])
 
   end
 end
