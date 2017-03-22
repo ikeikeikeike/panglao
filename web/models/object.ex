@@ -23,12 +23,13 @@ defmodule Panglao.Object do
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD DOWNLOADED
+    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED
     PENDING STARTED FAILURE SUCCESS
+    REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOADED)
+    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED)
   end
 
   def object?(struct) do
@@ -67,6 +68,13 @@ defmodule Panglao.Object do
     |> put_change(:stat, "PENDING")
     |> put_change(:slug, Hash.randstring(3))
     |> cast_attachments(params, @attaches)
+  end
+
+  def remove_changeset(struct, params \\ %{}) do
+    struct
+    |> changeset(params)
+    |> put_change(:stat, "REMOVED")
+    |> put_change(:src, nil)
   end
 
   def encode_changeset(struct, params \\ %{}) do
@@ -109,6 +117,11 @@ defmodule Panglao.Object do
     where: q.stat == "DOWNLOAD"
   end
 
+  def with_download_failure(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "DOWNLOAD_FAILURE"
+  end
+
   def with_downloaded(query \\ __MODULE__) do
     from q in query,
     where: q.stat == "DOWNLOADED"
@@ -116,12 +129,18 @@ defmodule Panglao.Object do
 
   def with_remote(query \\ __MODULE__) do
     from q in query,
-    where: q.stat in ~w(REMOTE DOWNLOAD)
+    where: q.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE)
   end
 
   def with_filer(query \\ __MODULE__) do
     from q in query,
-    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOADED)
+    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED)
   end
 
+  @expires Application.get_env(:panglao, :object)[:expires]
+  def with_removable(query \\ __MODULE__) do
+    expires = -(@expires)
+    from q in query,
+    where: q.inserted_at < datetime_add(^Ecto.DateTime.utc, ^expires, "hour")
+  end
 end

@@ -91,8 +91,8 @@ defmodule Panglao.Mixfile do
       {:httpoison, "~> 0.11.1"},
 
       {:ex_aws, "~> 1.1"},
-      {:arc, "~> 0.7", override: true},
-      {:arc_ecto, "~> 0.5"},
+      {:arc, "~> 0.7"},
+      {:arc_ecto, "~> 0.6"},
       {:sweet_xml, "~> 0.6"},
 
       {:exq, github: "akira/exq"},

@@ -16,6 +16,12 @@ defmodule Panglao.Builders.Remote do
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.remote),
            {:ok, object} <- Repo.update(Object.changeset(object, %{"stat" => "DOWNLOADED"})) do
         object
+      else
+        # {:ok, %{body: %{}}} ->
+          # Repo.update!(Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"}))
+        _msg ->
+          # IO.inspect msg
+          :try_again
       end
     end)
     |> Enum.filter(fn
