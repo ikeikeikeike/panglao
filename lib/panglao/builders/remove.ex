@@ -1,13 +1,14 @@
 defmodule Panglao.Builders.Remove do
   import Panglao.Builders.Base
 
-  alias Panglao.{Repo, Object}
+  alias Panglao.{Repo, Object, ObjectUploader}
 
   def perform do
     objects = Repo.all Object.with_removable
 
     Enum.map objects, fn object ->
-      with :ok, ObjectUploader.delete({object.src.file_name, object}),
+      with src when not is_nil(src) <- object.src,
+           :ok <- ObjectUploader.delete({src.file_name, object}),
            {:ok, object} <- Repo.update(Object.remove_changeset(object)) do
         object
       end

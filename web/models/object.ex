@@ -141,6 +141,7 @@ defmodule Panglao.Object do
   def with_removable(query \\ __MODULE__) do
     expires = -(@expires)
     from q in query,
-    where: q.inserted_at < datetime_add(^Ecto.DateTime.utc, ^expires, "hour")
+    where: q.stat != "REMOVED"
+       and q.inserted_at < datetime_add(^Ecto.DateTime.utc, ^expires, "hour")
   end
 end
