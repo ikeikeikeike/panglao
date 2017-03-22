@@ -5,9 +5,19 @@ defmodule Panglao.ObjectUploader do
   alias Panglao.Hash
 
   @cdnenv Application.get_env(:panglao, :cheapcdn)
-  @versions [:original] # :screenshot
+  @versions [:original, :screenshot]
   # @extension_whitelist ~w(.mp4 .flv)
   @acl :public_read
+
+
+  def transform(:screenshot, _) do
+    conv = fn(input, output) ->
+      Thumbnex.create_thumbnail input, output, max_width: 700, max_height: 430
+      output
+    end
+
+    {:file, conv, :jpg}
+  end
 
   def validate({_file, _}) do
     # file_extension = file.file_name |> Path.extname |> String.downcase
@@ -32,9 +42,17 @@ defmodule Panglao.ObjectUploader do
   end
 
   defp joinpath(version, {file, scope}) do
-    dir = storage_dir version, {file, scope}
+    dir  = storage_dir version, {file, scope}
     name = filename version, {file, scope}
-    Path.join dir, [name, Path.extname(compatible_name(file))]
+    ext  =
+      case version do
+        :original   ->
+          Path.extname(compatible_name(file))
+        :screenshot ->
+          ".jpg"
+      end
+
+    Path.join dir, [name, ext]
   end
 
   def default_url(:original) do
