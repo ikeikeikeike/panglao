@@ -34,7 +34,7 @@ defmodule Panglao.RemoteController do
             {:error, Enum.join(errors, "\n")}
 
           {:error, msg} ->
-            {:error, gettext("%{name} error happened %{msg}", name: remote, msg: message)}
+            {:error, gettext("%{name} error happened %{msg}", name: remote, msg: msg)}
 
           {:ok, object} ->
             message =

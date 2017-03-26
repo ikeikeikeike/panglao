@@ -1,7 +1,7 @@
 defmodule Panglao.Api.V1.RemoteController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object, Object.Remote, Object.Q, Client.Progress, Hash}
+  alias Panglao.{Object.Remote, Object.Q, Client.Progress, Hash}
 
   def upload(conn, %{"url" => url}) do
     user_id  = conn.assigns.current_user.id

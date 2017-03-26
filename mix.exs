@@ -95,7 +95,7 @@ defmodule Panglao.Mixfile do
       {:arc_ecto, "~> 0.6"},
       {:sweet_xml, "~> 0.6"},
 
-      {:exq, github: "akira/exq"},
+      {:exq, "~> 0.8.4"},
       {:ffmpex, "~> 0.4"},
       {:thumbnex, "~> 0.2"},
 
@@ -119,10 +119,16 @@ defmodule Panglao.Mixfile do
       {:comeonin, "~> 3.0"},
       {:ex_crypto, "~> 0.3"},  # Need encrypt and decrypt.
 
-      {:rdtype, "~> 0.4"},
+      {:rdtype, "~> 0.5"},
       {:chexes, github: "ikeikeikeike/chexes"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:phoenix_html_simplified_helpers, "~> 1.1"},
+
+      {:exsyslog, "~> 1.0"},
+      {:sitemap, ">= 0.0.0"},
+      {:distillery, "~> 1.3"},
+
+      {:credo, "~> 0.7", only: [:dev, :test]},
     ]
   end
 

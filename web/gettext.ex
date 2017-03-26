@@ -45,8 +45,8 @@ defmodule Panglao.Gettext do
     known = Gettext.known_locales(Panglao.Gettext)
     allowed = Application.get_env(:panglao, Panglao.Gettext)[:locales]
 
-    Set.intersection(Enum.into(known, HashSet.new), Enum.into(allowed, HashSet.new))
-    |> Set.to_list
+    MapSet.intersection(Enum.into(known, MapSet.new), Enum.into(allowed, MapSet.new))
+    |> MapSet.to_list
   end
 
 

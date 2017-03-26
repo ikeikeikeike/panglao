@@ -1,6 +1,4 @@
 defmodule Panglao.Builders.Remote do
-  import Panglao.Builders.Base
-  import Ecto.Query, only: [from: 2]
 
   alias Panglao.{Repo, Object, Object.Basic, Builders, Client.Progress}
 
