@@ -3,6 +3,8 @@ defmodule Panglao.Repo.Migrations.CreateObject do
 
   def change do
     create table(:objects) do
+      add :user_id, :integer
+
       add :name, :string
       add :slug, :string
       add :stat, :string
@@ -12,10 +14,10 @@ defmodule Panglao.Repo.Migrations.CreateObject do
 
       timestamps()
     end
+    create index(:objects, [:user_id, :url], unique: true)
     create index(:objects, [:name])
     create index(:objects, [:slug])
     create index(:objects, [:stat])
-    create index(:objects, [:url])
 
   end
 end

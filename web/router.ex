@@ -46,7 +46,7 @@ defmodule Panglao.Router do
     get "/", PageController, :index
     get "/l/:id/:slug", PageController, :short
     get "/link/:id/:name", PageController, :direct
-    get "/splash", PageController, :splash
+    # get "/splash", PageController, :splash
   end
 
   scope "/", Panglao do

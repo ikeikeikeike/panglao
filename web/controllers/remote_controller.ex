@@ -19,46 +19,42 @@ defmodule Panglao.RemoteController do
   end
 
   def upload(conn, %{"message" => message}) do
-    user_id  = conn.assigns.current_user.id
-    remotes  = String.split message, "\n"
+    user_id = conn.assigns.current_user.id
+    remotes = String.split message, "\n"
 
     results =
       Enum.map remotes, fn remote ->
         params = %{"user_id" => user_id, "remote" => String.trim(remote)}
-        Remote.upload params
+
+        case Remote.upload(params) do
+          {:error, %Ecto.Changeset{} = c} ->
+            errors = Enum.map c.errors, fn {field, msg} ->
+              "#{translate_default field} #{translate_error msg}"
+            end
+            {:error, Enum.join(errors, "\n")}
+
+          {:error, msg} ->
+            {:error, gettext("%{name} error happened %{msg}", name: remote, msg: message)}
+
+          {:ok, object} ->
+            message =
+              cond do
+                Object.remote?(object) ->
+                  gettext "%{name} is downloading in progress", name: object.name
+                Object.object?(object) ->
+                  gettext "%{name} became persistent file already", name: object.name
+                true ->
+                  gettext "%{name} still work in progress", name: object.name
+              end
+            {:ok, message}
+        end
       end
 
-    message =
-      Enum.map results, fn
-        {:error, %Ecto.Changeset{} = c} ->
-          errors = Enum.map c.errors, fn {field, msg} ->
-            "#{translate_default field} #{translate_error msg}"
-          end
-          Enum.join errors, "\n"
+    info = Enum.filter_map(results, &elem(&1, 0) == :ok, &elem(&1, 1)) |> Enum.join("<br/>")
+    error = Enum.filter_map(results, &elem(&1, 0) == :error, &elem(&1, 1)) |> Enum.join("<br/>")
 
-        {:error, message} ->
-          "#{message}"
-
-        {:ok, object} ->
-          cond do
-            Object.remote?(object) ->
-              ""
-            Object.object?(object) ->
-              ""
-            true ->
-              ""
-          end
-      end
-
-    conn =
-      if blank? message do
-        msg = gettext "Sweet! Remote uploading successfully"
-        put_flash conn, :info, msg
-      else
-        msb = gettext("Upload error below:") <> Enum.join(message, "\n")
-        put_flash conn, :error, msb
-      end
-
+    conn = if present?(info), do: put_flash(conn, :info, gettext("Sweet! Remote uploading successfully below:<br/>") <> info), else: conn
+    conn = if present?(error), do: put_flash(conn, :error, gettext("Upload error below:<br/>") <> error), else: conn
     conn
     |> redirect(to: remote_path(conn, :index))
   end

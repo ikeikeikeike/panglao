@@ -2,7 +2,7 @@ defmodule Panglao.ObjectUploader do
   use Arc.Definition
   use Arc.Ecto.Definition
 
-  alias Panglao.Hash
+  alias Panglao.{Hash, Helpers, Router, Endpoint}
 
   @cdnenv Application.get_env(:panglao, :cheapcdn)
   @versions [:original, :screenshot]
@@ -12,7 +12,12 @@ defmodule Panglao.ObjectUploader do
 
   def transform(:screenshot, _) do
     conv = fn(input, output) ->
-      Thumbnex.create_thumbnail input, output, max_width: 700, max_height: 430
+      try do
+        Thumbnex.create_thumbnail input, output, max_width: 700, max_height: 430
+      rescue _ ->
+        File.write output, Panglao.File.decode_datauri(Helpers.fallback)
+      end
+
       output
     end
 
@@ -34,25 +39,42 @@ defmodule Panglao.ObjectUploader do
   # def __storage, do: Arc.Storage.S3
 
   def filename(_version, {file, _model}) do
-    Hash.short "#{Path.basename(compatible_name(file), Path.extname(compatible_name(file)))}"
+    Path.basename(compatible_name(file), Path.extname(compatible_name(file)))
+    |> Hash.short
   end
 
   def storage_dir(_version, {_file, model}) do
     Hash.short model.id
   end
 
+  defp file_ext(version, {file, _model}) do
+    case version do
+      :original   ->
+        Path.extname(compatible_name(file))
+      :screenshot ->
+        ".jpg"
+    end
+  end
+
   defp joinpath(version, {file, scope}) do
     dir  = storage_dir version, {file, scope}
     name = filename version, {file, scope}
-    ext  =
-      case version do
-        :original   ->
-          Path.extname(compatible_name(file))
-        :screenshot ->
-          ".jpg"
-      end
+    ext  = file_ext version, {file, scope}
 
     Path.join dir, [name, ext]
+  end
+
+  def local_url({file, scope}) do
+    fext  = file_ext(:screenshot, {file, scope})
+    fname = "#{Hash.short(scope.id)}#{fext}"
+    fpath = Path.join "priv/static/splash", fname
+
+    unless File.exists?(fpath) do
+      fimg = auth_url({file, scope}, :screenshot)
+      File.write fpath, HTTPoison.get!(fimg).body
+    end
+
+    Router.Helpers.static_url Endpoint, "/splash/#{fname}"
   end
 
   def default_url(:original) do
@@ -74,5 +96,4 @@ defmodule Panglao.ObjectUploader do
   defp compatible_name(file) do
     Map.get file, :file_name, Map.get(file, :filename)
   end
-
 end

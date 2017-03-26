@@ -1,8 +1,11 @@
 defmodule Panglao.User do
   use Panglao.Web, :model
 
+  alias Panglao.{Object, Authorization}
+
   schema "users" do
-    has_many :authorizations, Panglao.Authorization
+    has_many :objects, Object
+    has_many :authorizations, Authorization
 
     field :name, :string
     field :email, :string

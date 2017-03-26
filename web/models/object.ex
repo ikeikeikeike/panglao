@@ -2,10 +2,12 @@ defmodule Panglao.Object do
   use Panglao.Web, :model
   use Arc.Ecto.Schema
 
-  alias Panglao.{ObjectUploader, Hash}
+  alias Panglao.{User, ObjectUploader, Hash}
 
   @derive {Poison.Encoder, only: ~w(name slug remote stat src inserted_at updated_at)a}
   schema "objects" do
+    belongs_to :user, User
+
     field :name, :string
     field :slug, :string
 
@@ -19,7 +21,7 @@ defmodule Panglao.Object do
   end
 
   @requires ~w()a
-  @castable ~w(name stat slug remote url)a
+  @castable ~w(name stat slug remote url user_id)a
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
