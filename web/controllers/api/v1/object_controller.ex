@@ -34,7 +34,7 @@ defmodule Panglao.Api.V1.ObjectController do
 
   defp img(conn, obj) do
     json conn, %{
-      src: if(obj.src, do: ObjectUploader.local_url({obj.src, obj})),
+      src: ObjectUploader.local_url(if obj.src, do: {obj.src, obj}, else: obj),
       updated: if(obj.src, do: obj.src.updated_at, else: obj.updated_at),
       created: obj.inserted_at,
     }

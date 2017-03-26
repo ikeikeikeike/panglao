@@ -65,6 +65,8 @@ defmodule Panglao.ObjectUploader do
   end
 
   def local_url({file, scope}) do
+    file  = file || %Arc.File{file_name: scope.name}
+
     fext  = file_ext(:screenshot, {file, scope})
     fname = "#{Hash.short(scope.id)}#{fext}"
     fpath = Path.join "priv/static/splash", fname
@@ -75,6 +77,9 @@ defmodule Panglao.ObjectUploader do
     end
 
     Router.Helpers.static_url Endpoint, "/splash/#{fname}"
+  end
+  def local_url(scope) do
+    local_url {nil, scope}
   end
 
   def default_url(:original) do
