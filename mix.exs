@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.0"
+    v = "0.1.1"
     File.write! "VERSION", v
     v
   end
@@ -63,7 +63,12 @@ defmodule Panglao.Mixfile do
        :guardian, :guardian_db,
        :ueberauth, :ueberauth_identity,
        # :ueberauth_github, :ueberauth_facebook, :ueberauth_google, :ueberauth_twitter, :ueberauth_slack
-     ]
+     ],
+      included_applications: [
+        :crontab,
+        :exsyslog,
+        :syslog,
+      ]
     ]
   end
 

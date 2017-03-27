@@ -22,7 +22,7 @@ fixversion() {
 }
 
 build() {
-    fixversion
+    # fixversion
 
     ssh ${USER}@${BUILDING} "rm -rf src/panglao/priv/static/css/*"
     ssh ${USER}@${BUILDING} "rm -rf src/panglao/priv/static/js/*"

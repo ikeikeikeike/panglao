@@ -73,6 +73,7 @@ defmodule Panglao.ObjectUploader do
 
     unless File.exists?(fpath) do
       fimg = auth_url({file, scope}, :screenshot)
+      File.mkdir "priv/static/splash"
       File.write fpath, HTTPoison.get!(fimg).body
     end
 
