@@ -29,18 +29,20 @@ defmodule Panglao.Builders.Remote do
   end
 
   defp upload(objects) do
-    Enum.map objects, fn object ->
-      src = %Plug.Upload{
+    src = fn object, binary ->
+      %Plug.Upload{
         content_type: nil, filename: object.name,
-        path: Panglao.File.store_temporary(File.read!(object.remote)),
+        path: Panglao.File.store_temporary(binary),
       }
+    end
 
-      case Basic.upload(object, %{"src" => src}) do
-        {:ok, object} ->
-          Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
-
-        {:error, changeset} ->
-          changeset
+    Enum.map objects, fn object ->
+      with {:ok, binary} <- File.read(object.remote),
+           {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
+        Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
+      else
+        {:error, error} ->
+          error
       end
     end
   end
