@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.4"
+    v = "0.1.6"
     File.write! "VERSION", v
     v
   end
@@ -41,9 +41,9 @@ defmodule Panglao.Mixfile do
 
        :chexes,
        :common_device_detector,
-       :phoenix_html_simplified_helpers,
 
        :ex_aws,
+       :sweet_xml,
        :arc,
        :arc_ecto,
 
@@ -65,6 +65,8 @@ defmodule Panglao.Mixfile do
        # :ueberauth_github, :ueberauth_facebook, :ueberauth_google, :ueberauth_twitter, :ueberauth_slack
      ],
       included_applications: [
+        :phoenix_html_simplified_helpers,
+        :timex,
         :crontab,
         :exsyslog,
         :syslog,

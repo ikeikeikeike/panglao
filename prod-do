@@ -36,8 +36,6 @@ download() {
         rm -rf  static
         ln -fs lib/panglao-${VERSION}/priv/static
     )
-
-    ssh ${USER}@${BUILDING} "rm -rf ~/src/panglao/_build/prod/rel/panglao"
 }
 
 upload() {
