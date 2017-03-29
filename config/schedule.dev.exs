@@ -4,12 +4,12 @@ config :quantum, :panglao,
   cron: [
     remote_perform: [
       schedule: "* * * * *",
-      task: "Panglao.Builders.Remote.perform",
+      task: "Panglao.Tasks.Remote.perform",
       args: []
     ],
     remove_perform: [
       schedule: "10 * * * *",
-      task: "Panglao.Builders.Remove.perform",
+      task: "Panglao.Tasks.Remove.perform",
       args: []
     ]
   ]

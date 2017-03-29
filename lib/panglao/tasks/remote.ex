@@ -1,6 +1,6 @@
-defmodule Panglao.Builders.Remote do
+defmodule Panglao.Tasks.Remote do
 
-  alias Panglao.{Repo, Object, Object.Basic, Builders, Client.Progress}
+  alias Panglao.{Repo, Object, Object.Basic, Tasks, Client.Progress}
 
   def perform do
     upload downloaded()
@@ -39,7 +39,7 @@ defmodule Panglao.Builders.Remote do
     Enum.map objects, fn object ->
       with {:ok, binary} <- File.read(object.remote),
            {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
-        Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
+        Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
       else
         {:error, error} ->
           error

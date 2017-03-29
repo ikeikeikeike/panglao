@@ -1,5 +1,5 @@
-defmodule Panglao.Builders.Remove do
-  import Panglao.Builders.Base
+defmodule Panglao.Tasks.Remove do
+  import Panglao.Tasks.Base
 
   alias Panglao.{Repo, Object, ObjectUploader}
 

@@ -1,4 +1,4 @@
-defmodule Panglao.Builders.Base do
+defmodule Panglao.Tasks.Base do
   alias Panglao.Repo
   require Logger
 

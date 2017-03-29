@@ -1,7 +1,7 @@
 defmodule Panglao.FilerController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object, Object.Basic, Builders}
+  alias Panglao.{Object, Object.Basic, Tasks}
 
   def index(conn, _params) do
     objects = Repo.all Object.with_filer
@@ -15,7 +15,7 @@ defmodule Panglao.FilerController do
     |> Basic.upload
     |> case do
       {:ok, object} ->
-        Exq.enqueue Exq, "encoder", Builders.Encode, [object.id]
+        Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
 
         msg = gettext("Sweet! You have exactly a brand new object")
         json conn, %{msg: msg, object: object}

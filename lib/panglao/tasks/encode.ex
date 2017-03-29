@@ -1,5 +1,5 @@
-defmodule Panglao.Builders.Encode do
-  import Panglao.Builders.Base
+defmodule Panglao.Tasks.Encode do
+  import Panglao.Tasks.Base
   import Ecto.Query, only: [from: 2]
 
   alias Panglao.{Repo, Object, ObjectUploader}
@@ -32,7 +32,7 @@ defmodule Panglao.Builders.Encode do
 
         try do
           if @config[:encode] do
-            url = ObjectUploader.develop_url({object.src, object})
+            url = ObjectUploader.auth_url({object.src, object})
             ObjectUploader.store({low(Arc.File.new(url)), object})
           end
 
