@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.7"
+    v = "0.1.10"
     File.write! "VERSION", v
     v
   end
@@ -59,6 +59,8 @@ defmodule Panglao.Mixfile do
 
        :comeonin,
        :ex_crypto,
+
+       :remote_ip,
 
        :guardian, :guardian_db,
        :ueberauth, :ueberauth_identity,
@@ -131,6 +133,8 @@ defmodule Panglao.Mixfile do
       {:chexes, github: "ikeikeikeike/chexes"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:phoenix_html_simplified_helpers, "~> 1.1"},
+
+      {:remote_ip, "~> 0.1"},
 
       {:exsyslog, "~> 1.0"},
       {:sitemap, ">= 0.0.0"},
