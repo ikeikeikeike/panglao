@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.6"
+    v = "0.1.7"
     File.write! "VERSION", v
     v
   end
@@ -67,6 +67,7 @@ defmodule Panglao.Mixfile do
       included_applications: [
         :phoenix_html_simplified_helpers,
         :timex,
+        :timex_ecto,
         :crontab,
         :exsyslog,
         :syslog,

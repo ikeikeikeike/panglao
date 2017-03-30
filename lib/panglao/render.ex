@@ -5,7 +5,7 @@ defmodule Panglao.Render do
   alias Panglao.ObjectUploader
 
   def img(conn, obj) do
-    url = ObjectUploader.auth_url {obj.src, obj}, :screenshot
+    url = ObjectUploader.auth_url {conn, obj.src, obj}, :screenshot
     r   = HTTPoison.get! url
 
     conn

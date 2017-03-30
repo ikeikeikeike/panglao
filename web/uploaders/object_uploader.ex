@@ -91,11 +91,24 @@ defmodule Panglao.ObjectUploader do
     Path.join(@cdnenv[:local_host], joinpath(version, {file, scope}))
   end
 
-  def auth_url({file, scope}, version \\ :original) do
-    opts   = [hackney: [basic_auth: @cdnenv[:auth]]]
-    object = joinpath(version, {file, scope})
+  def auth_url(tuple, version \\ :original)
 
-    r = HTTPoison.get!("#{@cdnenv[:gateway]}&object=#{object}", [], opts)
+  def auth_url({file, scope}, version) do
+    fetch_auth_url {"", file, scope}, version
+  end
+
+  def auth_url({conn, file, scope}, version) do
+    ip  = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
+    fetch_auth_url {"&ipaddr=#{ip}", file, scope}, version
+  end
+
+  defp fetch_auth_url({path, file, scope}, version) do
+    opt = [hackney: [basic_auth: @cdnenv[:auth]]]
+    o   = joinpath(version, {file, scope})
+
+    url = "#{@cdnenv[:gateway]}&object=#{o}" <> path
+    r   = HTTPoison.get! url, [], opt
+
     "#{url({file, scope}, version)}&cdnkey=#{r.body}"
   end
 
