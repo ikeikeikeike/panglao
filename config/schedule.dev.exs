@@ -7,11 +7,11 @@ config :quantum, :panglao,
       task: "Panglao.Tasks.Remote.perform",
       args: []
     ],
-    remove_perform: [
-      schedule: "10 * * * *",
-      task: "Panglao.Tasks.Remove.perform",
-      args: []
-    ],
+    # remove_perform: [
+      # schedule: "10 * * * *",
+      # task: "Panglao.Tasks.Remove.perform",
+      # args: []
+    # ],
     cleanup_unses_files: [
       schedule: "20 * * * *",
       task: "Panglao.Tasks.Cleanup.unses_files",

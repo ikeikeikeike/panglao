@@ -1,7 +1,7 @@
 defmodule Panglao.Api.V1.ObjectController do
   use Panglao.Web, :controller
 
-  alias Panglao.{ObjectUploader, Object.Q}
+  alias Panglao.{ObjectUploader, Object.Q, Render}
 
   def link(conn, _params) do
     user = conn.assigns.current_user

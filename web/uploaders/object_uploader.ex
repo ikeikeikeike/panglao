@@ -64,22 +64,30 @@ defmodule Panglao.ObjectUploader do
     Path.join dir, [name, ext]
   end
 
-  def local_url({file, scope}) do
+  def local_url(name, version \\ :screenshot)
+
+  def local_url({file, scope}, version) do
     file  = file || %Arc.File{file_name: scope.name}
 
-    fext  = file_ext(:screenshot, {file, scope})
+    fext  = file_ext(version, {file, scope})
     fname = "#{Hash.short(scope.id)}#{fext}"
-    fpath = Path.join "priv/static/splash", fname
+    fdir  = Path.join System.user_home, "priv/static/splash"
+    fpath = Path.join fdir, fname
 
-    unless File.exists?(fpath) do
-      fimg = auth_url({file, scope}, :screenshot)
-      File.mkdir "priv/static/splash"
-      File.write fpath, HTTPoison.get!(fimg).body
+    if Mix.env == :dev do
+      develop_url {file, scope}, version
+    else
+      unless File.exists?(fpath) do
+        fimg = develop_url {file, scope}, version
+        File.mkdir_p fdir
+        File.write fpath, HTTPoison.get!(fimg).body
+      end
+
+      Router.Helpers.static_url(Endpoint, "/splash/#{fname}")
+      |> Render.secure_url
     end
-
-    Router.Helpers.static_url Endpoint, "/splash/#{fname}"
   end
-  def local_url(scope) do
+  def local_url(scope, version) do
     local_url {nil, scope}
   end
 
@@ -88,7 +96,7 @@ defmodule Panglao.ObjectUploader do
   end
 
   def develop_url({file, scope}, version \\ :original) do
-    Path.join(@cdnenv[:local_host], joinpath(version, {file, scope}))
+    Path.join(Enum.random(@cdnenv[:objects]), joinpath(version, {file, scope}))
   end
 
   def auth_url(tuple, version \\ :original)

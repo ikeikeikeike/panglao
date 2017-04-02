@@ -53,3 +53,6 @@ config :panglao, Panglao.Repo,
   timeout: 30_000,
   pool_timeout: 30_000,
   ownership_timeout: 30_000
+
+config :panglao, :object,
+  expires: 0  # hours

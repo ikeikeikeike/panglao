@@ -65,6 +65,9 @@ config :logger,
 #     config :panglao, Panglao.Endpoint, server: true
 #
 
+config :panglao, :object,
+  expires: 12  # hours
+
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"

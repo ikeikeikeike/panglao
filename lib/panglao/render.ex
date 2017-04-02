@@ -19,4 +19,8 @@ defmodule Panglao.Render do
     for({k, v} <- headers, k == key, do: v) |> List.last
   end
 
+  def secure_url(url) do
+    (%URI{URI.parse(url) | scheme: "https", port: 443}) |> to_string
+  end
+
 end
