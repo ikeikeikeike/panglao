@@ -59,6 +59,8 @@ config :panglao, Panglao.Gettext,
   default_locale: "ja",
   locales: ~w(en es ja)
 
+config :panglao, :env, Mix.env
+
 config :exq,
   name: Exq,
   host: "127.0.0.1",

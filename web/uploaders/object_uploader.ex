@@ -2,13 +2,14 @@ defmodule Panglao.ObjectUploader do
   use Arc.Definition
   use Arc.Ecto.Definition
 
-  alias Panglao.{Hash, Helpers, Router, Endpoint}
+  alias Panglao.{Hash, Helpers, Router, Endpoint, Render}
 
+  @env Application.get_env(:panglao, :env)
   @cdnenv Application.get_env(:panglao, :cheapcdn)
-  @versions [:original, :screenshot]
-  # @extension_whitelist ~w(.mp4 .flv)
-  @acl :public_read
 
+  # @extension_whitelist ~w(.mp4 .flv)
+  @versions [:original, :screenshot]
+  @acl :public_read
 
   def transform(:screenshot, _) do
     conv = fn(input, output) ->
@@ -74,7 +75,7 @@ defmodule Panglao.ObjectUploader do
     fdir  = Path.join System.user_home, "priv/static/splash"
     fpath = Path.join fdir, fname
 
-    if Mix.env == :dev do
+    if @env == :dev do
       develop_url {file, scope}, version
     else
       unless File.exists?(fpath) do

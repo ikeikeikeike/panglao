@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.16"
+    v = "0.1.20"
     File.write! "VERSION", v
     v
   end
@@ -74,6 +74,11 @@ defmodule Panglao.Mixfile do
         :exsyslog,
         :syslog,
         :mogrify,
+
+        :elixir_make,
+        :exactor,
+        :sitemap,
+        :xml_builder,
       ]
     ]
   end
