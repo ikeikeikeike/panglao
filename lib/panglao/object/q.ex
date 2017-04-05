@@ -13,4 +13,9 @@ defmodule Panglao.Object.Q do
   def get!(%{"user_id" => user_id, "url" => url}) do
     Repo.get_by! Object, user_id: user_id, url: url
   end
+
+  def get(%{"user_id" => user_id, "url" => url}) do
+    Repo.get_by(Object, user_id: user_id, url: url) || %Object{}
+  end
+
 end

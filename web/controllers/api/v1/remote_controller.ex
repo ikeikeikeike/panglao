@@ -1,39 +1,22 @@
 defmodule Panglao.Api.V1.RemoteController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object.Remote, Object.Q, Client.Progress, Hash}
+  alias Panglao.{Object.Remote, Object.Q, Client.Progress, Hash, Object}
 
   def upload(conn, %{"url" => url}) do
     user_id  = conn.assigns.current_user.id
     params   = %{"user_id" => user_id, "remote" => url}
 
-    case Remote.upload(params) do
-      {:error, %Ecto.Changeset{} = c} ->
-        errors = Enum.map c.errors, fn {field, msg} ->
-          "#{translate_default field} #{translate_error msg}"
-        end
-        json conn, Enum.join(errors, "\n")
+    spawn fn -> Remote.upload params end
 
-      {:error, message} ->
-        json conn, "#{message}"
-
-      {:ok, object} ->
-        json conn, %{
-          status_id: Hash.encrypt(object.id),
-          name: object.name,
-          created: object.inserted_at,
-          updated: object.updated_at,
-        }
-    end
-  end
-
-  def status(conn, %{"id" => _hash} = params) do
-    progress conn, Q.get!(params)
+    json conn, %{message: "ok"}
   end
 
   def status(conn, %{"url" => url}) do
     user = conn.assigns.current_user
-    progress conn, Q.get!(%{"user_id" => user.id, "url" => url})
+    o = Q.get(%{"user_id" => user.id, "url" => url})
+
+    progress conn, o
   end
 
   defp progress(conn, o) do

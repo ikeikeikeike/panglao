@@ -17,12 +17,12 @@ version() {
 }
 
 fixversion() {
-    hg commit -m "fix version $VERSION" mix.exs VERSION
+    # hg commit -m "fix version $VERSION" mix.exs VERSION
     hg push
 }
 
 build() {
-    # fixversion
+    fixversion
 
     ssh ${USER}@${BUILDING} "rm -rf src/panglao/priv/static/css/*"
     ssh ${USER}@${BUILDING} "rm -rf src/panglao/priv/static/js/*"

@@ -10,6 +10,8 @@ defmodule Panglao.Object.Basic do
         {:error, changeset} -> Repo.rollback changeset
       end
     end
+  catch
+    x -> "Got #{x}"
   end
 
   def upload(%Object{} = object, params) do
@@ -20,6 +22,8 @@ defmodule Panglao.Object.Basic do
         {:error, changeset} -> Repo.rollback changeset
       end
     end
+  catch
+    x -> "Got #{x}"
   end
 
 end
