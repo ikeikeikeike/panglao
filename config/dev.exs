@@ -50,9 +50,9 @@ config :panglao, Panglao.Repo,
   database: "panglao_dev",
   hostname: "localhost",
   pool_size: 10,
-  timeout: 30_000,
-  pool_timeout: 30_000,
-  ownership_timeout: 30_000
+  timeout: 20_000,
+  pool_timeout: 20_000,
+  ownership_timeout: 20_000
 
 config :panglao, :object,
   expires: 0  # hours

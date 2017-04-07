@@ -131,12 +131,12 @@ defmodule Panglao.Object do
 
   def with_remote(query \\ __MODULE__) do
     from q in query,
-    where: q.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE)
+    where: q.stat in ~w(REMOTE DOWNLOAD)
   end
 
   def with_filer(query \\ __MODULE__) do
     from q in query,
-    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED)
+    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOADED)
   end
 
   @expires Application.get_env(:panglao, :object)[:expires]

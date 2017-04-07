@@ -1,5 +1,8 @@
 use Mix.Config
 
+config :quantum,
+  timeout: :infinity
+
 config :quantum, :panglao,
   cron: [
     remote_perform: [
@@ -12,9 +15,9 @@ config :quantum, :panglao,
       # task: "Panglao.Tasks.Remove.perform",
       # args: []
     # ],
-    cleanup_unses_files: [
-      schedule: "20 * * * *",
-      task: "Panglao.Tasks.Cleanup.unses_files",
-      args: []
-    ]
+    # cleanup_unses_files: [
+      # schedule: "20 * * * *",
+      # task: "Panglao.Tasks.Cleanup.unses_files",
+      # args: []
+    # ]
   ]

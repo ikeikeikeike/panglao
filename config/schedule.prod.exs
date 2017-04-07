@@ -1,5 +1,8 @@
 use Mix.Config
 
+config :quantum,
+  timeout: :infinity
+
 config :quantum, :panglao,
   cron: [
     remote_perform: [

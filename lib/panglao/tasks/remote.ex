@@ -1,14 +1,16 @@
 defmodule Panglao.Tasks.Remote do
 
+  import Ecto.Query
+
   alias Panglao.{Repo, Object, Object.Basic, Tasks, Client.Progress}
 
   def perform do
     upload downloaded()
-    upload Repo.all(Object.with_downloaded)
+    upload Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"))
   end
 
   defp downloaded do
-    objects = Repo.all Object.with_download
+    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"))
 
     Enum.map(objects, fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.remote),
@@ -42,6 +44,10 @@ defmodule Panglao.Tasks.Remote do
         Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
       else
         {:error, error} ->
+          Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
+          error
+        error ->
+          Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
           error
       end
     end
