@@ -6,11 +6,13 @@ defmodule Panglao.Object.Remote do
     case Repo.get_by(Object, user_id: user_id, url: remote) do
       nil ->
         upfile params
+      %{stat: "REMOVED"} = object ->
+        upfile params, object
       object ->
         {:ok, object}
     end
   end
-  defp upfile(params) do
+  defp upfile(params, object \\ %Object{}) do
     body =
       case Client.Info.get(params["remote"]) do
         {:ok, %HTTPoison.Response{status_code: 200} = r} ->
@@ -21,7 +23,7 @@ defmodule Panglao.Object.Remote do
 
     Repo.transaction fn  ->
       with %{}           <- body,
-           {:ok, object} <- Repo.insert(Object.remote_changeset(%Object{}, params)),
+           {:ok, object} <- Repo.insert_or_update(Object.remote_changeset(object, params)),
            {:ok,      _} <- Client.Download.get(object.remote),
            {:ok, object} <- Repo.update(Object.download_changeset(object, %{"remote" => body["outputfile"]})) do
 
