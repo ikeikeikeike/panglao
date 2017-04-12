@@ -33,7 +33,7 @@ defmodule Panglao.Api.V1.RemoteController do
       total_bytes: nil,
     }
 
-    case Progress.get(o.remote) do
+    case Progress.get(o.url) do
       {:ok, %{body: b}} ->
         json conn, Map.merge(r, %{
           status: Map.get(b, "status", "finished"),

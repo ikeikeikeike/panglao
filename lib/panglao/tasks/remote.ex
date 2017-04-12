@@ -13,7 +13,7 @@ defmodule Panglao.Tasks.Remote do
     objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"))
 
     Enum.map(objects, fn object ->
-      with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.remote),
+      with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.url),
            {:ok, object} <- Repo.update(Object.changeset(object, %{"stat" => "DOWNLOADED"})) do
         object
       else
