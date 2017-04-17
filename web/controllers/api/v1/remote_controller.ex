@@ -21,11 +21,12 @@ defmodule Panglao.Api.V1.RemoteController do
 
   defp progress(conn, o) do
     r = %{
+      object_status: o.stat,
       embed: if(o.src, do: page_url(conn, :embed, o, o.src.file_name)),
       short: if(o.src, do: page_url(conn, :short, o, o.slug)),
       direct: if(o.src, do: page_url(conn, :direct, o, o.src.file_name)),
-      updated: if(o.src, do: o.src.updated_at, else: o.updated_at),
-      created: o.inserted_at,
+      updated_at: if(o.src, do: o.src.updated_at, else: o.updated_at),
+      created_at: o.inserted_at,
       status: nil,
       eta: nil,
       speed: nil,

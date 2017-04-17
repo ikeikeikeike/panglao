@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.1.31"
+    v = "0.1.33"
     File.write! "VERSION", v
     v
   end
@@ -111,7 +111,7 @@ defmodule Panglao.Mixfile do
       {:arc_ecto, "~> 0.6"},
       {:sweet_xml, "~> 0.6"},
 
-      {:exq, "~> 0.8.4"},
+      {:exq, "~> 0.8"},
       {:ffmpex, "~> 0.4"},
       {:thumbnex, "~> 0.2"},
 

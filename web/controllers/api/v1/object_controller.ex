@@ -8,9 +8,13 @@ defmodule Panglao.Api.V1.ObjectController do
     json conn, user.id
   end
 
-  def info(conn, _params) do
+  def info(conn, %{"id" => _hash} = params) do
+    json conn, Q.get!(params)
+  end
+
+  def info(conn, %{"url" => url}) do
     user = conn.assigns.current_user
-    json conn, user.id
+    json conn, Q.get!(%{"user_id" => user.id, "url" => url})
   end
 
   def rename(conn, _params) do
@@ -35,8 +39,8 @@ defmodule Panglao.Api.V1.ObjectController do
   defp img(conn, obj) do
     json conn, %{
       src: ObjectUploader.local_url(if obj.src, do: {obj.src, obj}, else: obj),
-      updated: if(obj.src, do: obj.src.updated_at, else: obj.updated_at),
-      created: obj.inserted_at,
+      updated_at: if(obj.src, do: obj.src.updated_at, else: obj.updated_at),
+      created_at: obj.inserted_at,
     }
   end
 
