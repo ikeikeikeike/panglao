@@ -8,7 +8,8 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :panglao, Panglao.Endpoint,
   http: [port: {:system, "PORT"}], # http: [port: 4000],
-  debug_errors: true,
+  debug_errors: false,
+  # debug_errors: true,
   code_reloader: true,
   check_origin: false,
   watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",

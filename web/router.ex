@@ -58,6 +58,12 @@ defmodule Panglao.Router do
     get "/embed/:id/:name", PageController, :embed
   end
 
+  scope "/", Panglao do
+    pipe_through :embedable # Use the default browser stack
+
+    get "/unavailable", ErrorController, :unavailable
+  end
+
   scope "/my", Panglao do
     pipe_through [:browser, :browser_auth]
 

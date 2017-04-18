@@ -6,4 +6,11 @@ defmodule Panglao.ErrorController do
     |> put_flash(:error, gettext("You must be logged in to access that page"))
     |> redirect(to: auth_path(conn, :login, "identity"))
   end
+
+  def unavailable(conn, _params) do
+    conn
+    |> put_layout("page.html")
+    |> render("unavailable.html")
+  end
+
 end

@@ -60,7 +60,7 @@ defmodule Panglao.AuthController do
       # use tokens in two locations - :default and :admin - we need to load it (see above)
       |> Guardian.Plug.sign_out
       |> put_flash(:info, gettext("Signed out"))
-      |> redirect(to: "/")
+      |> render("logout.html")
     else
       conn
       |> put_flash(:info, gettext("Not logged in"))

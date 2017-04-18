@@ -6,4 +6,5 @@ defmodule Panglao.Api.ErrorController do
     |> put_status(401)
     |> text("Unauthorized")
   end
+
 end
