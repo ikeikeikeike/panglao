@@ -21,7 +21,7 @@ config :panglao, Panglao.Endpoint,
 
 # Do not print debug messages in production
 config :logger,
-  level: :warn,
+  level: :debug,
   backends: [
     {ExSyslog, :exsyslog_error},
     {ExSyslog, :exsyslog_debug},

@@ -33,7 +33,7 @@ defmodule Panglao.ObjectUploader do
 
   # https://github.com/stavro/arc#s3-object-headers
   def s3_object_headers(_version, {file, _scope}) do
-    [content_type: Plug.MIME.path(compatible_name(file))]
+    [content_type: Plug.MIME.path(compatible_name(file)), timeout: 500_000]
   end
 
   # def __storage, do: Arc.Storage.Local
@@ -107,7 +107,7 @@ defmodule Panglao.ObjectUploader do
   end
 
   def auth_url({conn, file, scope}, version) do
-    ip  = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
+    ip = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
     fetch_auth_url {"&ipaddr=#{ip}", file, scope}, version
   end
 

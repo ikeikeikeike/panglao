@@ -8,6 +8,7 @@ defmodule Panglao.Api.V1.RemoteController do
     params   = %{"user_id" => user_id, "remote" => url}
 
     spawn fn -> Remote.upload params end
+    Exq.enqueue Exq, "default", Panglao.Tasks.Remote, []
 
     json conn, %{message: "ok"}
   end

@@ -6,11 +6,11 @@ defmodule Panglao.Tasks.Remote do
 
   def perform do
     upload downloaded()
-    upload Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"))
+    upload Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"), limit: 30)
   end
 
   defp downloaded do
-    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"))
+    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"), limit: 30)
 
     Enum.map(objects, fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.url),
