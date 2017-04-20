@@ -21,7 +21,7 @@ config :panglao, Panglao.Endpoint,
 
 # Do not print debug messages in production
 config :logger,
-  level: :debug,
+  level: :warn,
   backends: [
     {ExSyslog, :exsyslog_error},
     {ExSyslog, :exsyslog_debug},
@@ -66,7 +66,7 @@ config :logger,
 #
 
 config :panglao, :object,
-  expires: 12  # hours
+  expires: 24  # hours
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.

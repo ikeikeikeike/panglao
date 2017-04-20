@@ -48,7 +48,7 @@ upload() {
 upgrade() {
     # upgrade
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
-    ssh ${USER}@${PRODUCTION} "sh rel/panglao/bin/panglao upgrade $1"
+    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao upgrade $1"
 
     restartsrv
 
@@ -58,13 +58,13 @@ upgrade() {
 restartsrv() {
     set +e
 
-    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/panglao/bin/panglao' | grep -v 'grep'"`
+    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
     echo;echo "PRODUCTION OUT: $OUT"
     ssh ${USER}@${PRODUCTION} "sudo systemctl restart phoenix"
     ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
     ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
     ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
-    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/panglao/bin/panglao' | grep -v 'grep'"`
+    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
     echo "PRODUCTION OUT: $OUT"
 
     set -e
@@ -72,7 +72,7 @@ restartsrv() {
 
 downgrade() {
     # upgrade
-    ssh ${USER}@${PRODUCTION} "sh rel/panglao/bin/panglao downgrade $1"
+    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao downgrade $1"
 
     echo;deployed
 }
@@ -83,15 +83,14 @@ remove() {
 
     rsync -avr --delete --stats _build/prod/rel/panglao/lib      ${USER}@${BUILDING}:~/src/panglao/_build/prod/rel/panglao/
     rsync -avr --delete --stats _build/prod/rel/panglao/releases ${USER}@${BUILDING}:~/src/panglao/_build/prod/rel/panglao/
-
-    rsync -avr --delete --stats _build/prod/rel/panglao/lib      ${USER}@${PRODUCTION}:~/rel/panglao/
-    rsync -avr --delete --stats _build/prod/rel/panglao/releases ${USER}@${PRODUCTION}:~/rel/panglao/
+    # rsync -avr --delete --stats _build/prod/rel/panglao/lib      ${USER}@${PRODUCTION}:~/rel/panglao/
+    # rsync -avr --delete --stats _build/prod/rel/panglao/releases ${USER}@${PRODUCTION}:~/rel/panglao/
 }
 
 deployed() {
     # upgrade
     echo "PRODUCTION"
-    ssh ${USER}@${PRODUCTION} "ls -t rel/panglao/releases"
+    ssh ${USER}@${PRODUCTION} "ls -t rel/releases"
 }
 
 case "$1" in
