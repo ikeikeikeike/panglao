@@ -113,12 +113,16 @@ defmodule Panglao.ObjectUploader do
 
   defp fetch_auth_url({path, file, scope}, version) do
     opt = [hackney: [basic_auth: @cdnenv[:auth]]]
-    o   = joinpath(version, {file, scope})
+    o = joinpath(version, {file, scope})
 
-    url = "#{@cdnenv[:gateway]}&object=#{o}" <> path
-    r   = HTTPoison.get! url, [], opt
+    h = "#{@cdnenv[:gateway]}&object=#{o}" <> path
+    b = Poison.decode! HTTPoison.get!(h, [], opt).body
 
-    "#{url({file, scope}, version)}&cdnkey=#{r.body}"
+    u1 = URI.parse "#{url({file, scope}, version)}&cdnkey=#{b["key"]}"
+    u2 = URI.parse b["host"]
+
+    %{u1 | host: u2.host, authority: u2.authority, scheme: u2.scheme}
+    |> to_string
   end
 
   defp compatible_name(file) do
