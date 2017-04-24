@@ -2,7 +2,7 @@ defmodule Panglao.Tasks.Remote do
 
   import Ecto.Query
 
-  alias Panglao.{Repo, Object, Object.Basic, Tasks, Client.Progress}
+  alias Panglao.{Repo, Object, ObjectUploader, Object.Basic, Tasks, Client.Progress}
 
   def perform do
     upload downloaded()
@@ -41,13 +41,21 @@ defmodule Panglao.Tasks.Remote do
     Enum.map objects, fn object ->
       with {:ok, binary} <- File.read(object.remote),
            {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
+
+        # Convert
         Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+
+        # Make img and remove mp4
+        ObjectUploader.local_url {object.src, object}
+        File.rm object.remote
       else
         {:error, error} ->
           Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
+          File.rm object.remote
           error
         error ->
           Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
+          File.rm object.remote
           error
       end
     end
