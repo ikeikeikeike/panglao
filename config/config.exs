@@ -69,7 +69,7 @@ config :exq,
   namespace: "exq",
   queues: [{"default", :infinite}, {"encoder", 1}],
   scheduler_enable: true,
-  max_retries: 15
+  max_retries: 3
   # password: "optional_redis_auth",
   # poll_timeout: 50,
   # scheduler_poll_timeout: 200,

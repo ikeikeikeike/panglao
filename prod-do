@@ -42,7 +42,8 @@ download() {
 
 upload() {
     # upload staging
-    rsync -avr --stats _build/prod/rel ${USER}@${PRODUCTION}:~/
+    # rsync -avr --stats _build/prod/rel ${USER}@${PRODUCTION}:~/
+    scp _build/prod/rel/panglao/releases/${VERSION}/panglao.tar.gz ${USER}@${PRODUCTION}:~/rel/
 }
 
 upgrade() {
