@@ -33,7 +33,7 @@ defmodule Panglao.ObjectUploader do
 
   # https://github.com/stavro/arc#s3-object-headers
   def s3_object_headers(_version, {file, _scope}) do
-    [content_type: Plug.MIME.path(compatible_name(file)), timeout: 500_000]
+    [content_type: Plug.MIME.path(compatible_name(file)), timeout: 1_000_000]
   end
 
   # def __storage, do: Arc.Storage.Local
