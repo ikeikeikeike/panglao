@@ -4,6 +4,8 @@ defmodule Panglao.Tasks.Remote do
 
   alias Panglao.{Repo, Object, ObjectUploader, Object.Basic, Tasks, Client.Progress}
 
+  require Logger
+
   @limit_size 512 * 1024 * 1024
 
   def perform do
@@ -43,7 +45,7 @@ defmodule Panglao.Tasks.Remote do
     Enum.map objects, fn object ->
       try do
         with {:ok, binary} <- File.read(object.remote),
-             {:ok, %{size: size}} when size < @limit_size <- File.stat(binary),
+             {:ok, %{size: size}} when size < @limit_size <- File.stat(object.remote),
              {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
 
           # Convert
@@ -54,22 +56,27 @@ defmodule Panglao.Tasks.Remote do
           File.rm object.remote
         else
           {:error, error} ->
+            Logger.warn "#{error}: #{object.id}"
             failure object
             error
 
           {:ok, %{size: _size}} ->
+            Logger.warn "maxsize: #{object.id}"
             filemaxsize object
             :filemaxsize
 
           error ->
+            Logger.warn "last #{error}: #{object.id}"
             failure object
             error
         end
       rescue error ->
+        Logger.error "rescue #{error}: #{object.id}"
         failure object
         error
 
       catch error ->
+        Logger.error "catch #{error}: #{object.id}"
         failure object
         error
 
