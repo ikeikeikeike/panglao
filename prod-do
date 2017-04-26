@@ -116,7 +116,7 @@ Commands:
     fixversion <version>      Fix package version.
     build      [options]      Build packages.
     upload                    UploadDeplo packages.
-    download   <version>      Download rel.
+    download                  Download rel.
     upgrade    <version>      Upload rel.
     downgrade  <version>      Hot deploy server.
     deployed                  Deployed versions.

@@ -9,12 +9,12 @@ defmodule Panglao.Tasks.Remote do
   @limit_size 512 * 1024 * 1024
 
   def perform do
-    upload downloaded()
-    upload Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"), limit: 30)
+    upload uploading(downloaded())
+    upload uploading(Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"), limit: 10))
   end
 
   defp downloaded do
-    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"), limit: 30)
+    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"), limit: 10)
 
     Enum.map(objects, fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.url),
@@ -81,6 +81,25 @@ defmodule Panglao.Tasks.Remote do
         error
       end
     end
+  end
+
+  defp uploading(objects) when is_list(objects) do
+    upfiles =
+      Enum.map objects, fn object ->
+        case uploading(object) do
+          {:ok,   object} -> object
+          {:error, error} -> Logger.warn error
+        end
+      end
+
+    Enum.filter upfiles, fn
+      %Object{} -> true
+      _         -> false
+    end
+  end
+
+  defp uploading(object) do
+    Repo.update Object.changeset(object, %{"stat" => "UPLOADING"})
   end
 
   defp failure(object) do

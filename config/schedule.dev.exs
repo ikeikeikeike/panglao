@@ -20,4 +20,9 @@ config :quantum, :panglao,
       # task: "Panglao.Tasks.Cleanup.unses_files",
       # args: []
     # ]
+    touch_perform: [
+      schedule: "* * * * *",
+      task: "Panglao.Tasks.Touch.perform",
+      args: []
+    ]
   ]

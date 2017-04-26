@@ -25,13 +25,13 @@ defmodule Panglao.Object do
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE DOWNLOADED
+    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE UPLOADING DOWNLOADED
     PENDING STARTED FAILURE SUCCESS
     REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE DOWNLOADED)
+    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE UPLOADING DOWNLOADED)
   end
 
   def object?(struct) do
@@ -134,6 +134,11 @@ defmodule Panglao.Object do
     where: q.stat == "DOWNLOADED"
   end
 
+  def with_uploading(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "UPLOADING"
+  end
+
   def with_remote(query \\ __MODULE__) do
     from q in query,
     where: q.stat in ~w(REMOTE DOWNLOAD)
@@ -141,7 +146,7 @@ defmodule Panglao.Object do
 
   def with_filer(query \\ __MODULE__) do
     from q in query,
-    where: not q.stat in ~w(NONE REMOTE DOWNLOAD DOWNLOADED)
+    where: not q.stat in ~w(NONE REMOTE DOWNLOAD UPLOADING DOWNLOADED)
   end
 
   @expires Application.get_env(:panglao, :object)[:expires]

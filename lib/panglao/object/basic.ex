@@ -4,14 +4,16 @@ defmodule Panglao.Object.Basic do
   require Logger
 
   def upload(params) do
-    Repo.transaction fn  ->
+    # Repo.transaction fn  ->
       with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, params)),
            {:ok, object} <- Repo.update(Object.object_changeset(object, params)) do
         object
       else
-        {:error, changeset} -> Repo.rollback changeset
+        {:error, changeset} ->
+          # Repo.rollback
+          changeset
       end
-    end
+    # end
   rescue
     err ->
       Logger.warn "#{inspect(err)}"
@@ -23,13 +25,15 @@ defmodule Panglao.Object.Basic do
   end
 
   def upload(%Object{} = object, params) do
-    Repo.transaction fn  ->
+    # Repo.transaction fn  ->
       with {:ok, object} <- Repo.update(Object.object_changeset(object, params)) do
         object
       else
-        {:error, changeset} -> Repo.rollback changeset
+        {:error, changeset} ->
+          # Repo.rollback changeset
+          changeset
       end
-    end
+    # end
   rescue
     err ->
       Logger.warn "#{inspect(err)}"
