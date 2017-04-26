@@ -79,7 +79,6 @@ defmodule Panglao.Tasks.Remote do
         Logger.error "catch #{error}: #{object.id}"
         failure object
         error
-
       end
     end
   end
