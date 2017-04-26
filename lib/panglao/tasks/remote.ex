@@ -66,17 +66,17 @@ defmodule Panglao.Tasks.Remote do
             :filemaxsize
 
           error ->
-            Logger.warn "last #{error}: #{object.id}"
+            Logger.warn "last #{inspect error}: #{object.id}"
             failure object
             error
         end
       rescue error ->
-        Logger.error "rescue #{error}: #{object.id}"
+        Logger.error "rescue #{inspect error}: #{object.id}"
         failure object
         error
 
       catch error ->
-        Logger.error "catch #{error}: #{object.id}"
+        Logger.error "catch #{inspect error}: #{object.id}"
         failure object
         error
       end

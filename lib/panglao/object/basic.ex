@@ -5,14 +5,15 @@ defmodule Panglao.Object.Basic do
 
   def upload(params) do
     # Repo.transaction fn  ->
-      with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, params)),
-           {:ok, object} <- Repo.update(Object.object_changeset(object, params)) do
-        object
-      else
-        {:error, changeset} ->
-          # Repo.rollback
-          changeset
-      end
+    with {:ok, object} <- Repo.insert(Object.changeset(%Object{}, params)),
+         {:ok, object} <- Repo.update(Object.object_changeset(object, params)) do
+      # object
+      {:ok, object}
+    else
+      {:error, changeset} ->
+        # Repo.rollback
+        changeset
+    end
     # end
   rescue
     err ->
@@ -27,7 +28,8 @@ defmodule Panglao.Object.Basic do
   def upload(%Object{} = object, params) do
     # Repo.transaction fn  ->
       with {:ok, object} <- Repo.update(Object.object_changeset(object, params)) do
-        object
+        # object
+        {:ok, object}
       else
         {:error, changeset} ->
           # Repo.rollback changeset
