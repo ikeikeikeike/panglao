@@ -25,13 +25,13 @@ defmodule Panglao.Object do
   @attaches ~w(src)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED
+    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE DOWNLOADED
     PENDING STARTED FAILURE SUCCESS
     REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOADED)
+    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE DOWNLOADED)
   end
 
   def object?(struct) do
@@ -122,6 +122,11 @@ defmodule Panglao.Object do
   def with_download_failure(query \\ __MODULE__) do
     from q in query,
     where: q.stat == "DOWNLOAD_FAILURE"
+  end
+
+  def with_download_filemaxsize(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "DOWNLOAD_FILEMAXSIZE"
   end
 
   def with_downloaded(query \\ __MODULE__) do

@@ -4,6 +4,8 @@ defmodule Panglao.Tasks.Remote do
 
   alias Panglao.{Repo, Object, ObjectUploader, Object.Basic, Tasks, Client.Progress}
 
+  @limit_size 512 * 1024 * 1024
+
   def perform do
     upload downloaded()
     upload Repo.all(from Object.with_downloaded, order_by: fragment("RANDOM()"), limit: 30)
@@ -39,26 +41,50 @@ defmodule Panglao.Tasks.Remote do
     end
 
     Enum.map objects, fn object ->
-      with {:ok, binary} <- File.read(object.remote),
-           {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
+      try do
+        with {:ok, binary} <- File.read(object.remote),
+             {:ok, %{size: size}} when size < @limit_size <- File.stat(binary),
+             {:ok, object} <- Basic.upload(object, %{"src" => src.(object, binary)}) do
 
-        # Convert
-        Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+          # Convert
+          Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
 
-        # Make img and remove mp4
-        ObjectUploader.local_url {object.src, object}
-        File.rm object.remote
-      else
-        {:error, error} ->
-          Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
+          # Make img and remove mp4
+          ObjectUploader.local_url {object.src, object}
           File.rm object.remote
-          error
-        error ->
-          Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
-          File.rm object.remote
-          error
+        else
+          {:error, error} ->
+            failure object
+            error
+
+          {:ok, %{size: _size}} ->
+            filemaxsize object
+            :filemaxsize
+
+          error ->
+            failure object
+            error
+        end
+      rescue error ->
+        failure object
+        error
+
+      catch error ->
+        failure object
+        error
+
       end
     end
+  end
+
+  defp failure(object) do
+    Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"})
+    File.rm object.remote
+  end
+
+  defp filemaxsize(object) do
+    Repo.update Object.changeset(object, %{"stat" => "DOWNLOAD_FILEMAXSIZE"})
+    File.rm object.remote
   end
 
 end

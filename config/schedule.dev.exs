@@ -16,7 +16,7 @@ config :quantum, :panglao,
       # args: []
     # ],
     # cleanup_unses_files: [
-      # schedule: "20 * * * *",
+      # schedule: "*/20 * * * *",
       # task: "Panglao.Tasks.Cleanup.unses_files",
       # args: []
     # ]
