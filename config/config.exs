@@ -59,7 +59,8 @@ config :panglao, Panglao.Gettext,
   default_locale: "ja",
   locales: ~w(en es ja)
 
-config :panglao, :env, Mix.env
+config :panglao, :env,
+  Mix.env
 
 config :exq,
   name: Exq,
@@ -74,9 +75,6 @@ config :exq,
   # poll_timeout: 50,
   # scheduler_poll_timeout: 200,
   # shutdown_timeout: 5000
-
-config :ex_aws,
-  http_client: Panglao.Client.S3
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

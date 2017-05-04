@@ -9,14 +9,18 @@ defmodule Panglao.Object.Progress do
       {:ok, %{body: b}} ->
         parse_body b
       _ ->
-        %{
-          status: nil,
-          eta: nil,
-          speed: nil,
-          percent: nil,
-          total_bytes: nil,
-        }
+        none()
     end
+  end
+
+  defp none do
+    %{
+      status: nil,
+      eta: nil,
+      speed: nil,
+      percent: nil,
+      total_bytes: nil,
+    }
   end
 
   defp parse_body(b) do
@@ -45,7 +49,7 @@ defmodule Panglao.Object.Progress do
           "total_bytes" => "#{total}MiB",
         }
       _ ->
-        parse_body %{}
+        none()
     end
   end
 
