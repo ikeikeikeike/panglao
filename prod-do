@@ -49,7 +49,7 @@ upload() {
 upgrade() {
     # upgrade
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
-    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao upgrade $1"
+    ssh ${USER}@${PRODUCTION} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
 
     restartsrv
 
@@ -69,13 +69,6 @@ restartsrv() {
     echo "PRODUCTION OUT: $OUT"
 
     set -e
-}
-
-downgrade() {
-    # upgrade
-    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao downgrade $1"
-
-    echo;deployed
 }
 
 remove() {
@@ -101,8 +94,7 @@ case "$1" in
     build)              build             ;;
     upload)             upload            ;;
     download)           download          ;;
-    upgrade)            upgrade $2        ;;
-    downgrade)          downgrade $2      ;;
+    upgrade)            upgrade           ;;
     deployed)           deployed          ;;
     remove)             remove $2         ;;
     restart)            restartsrv        ;;
@@ -117,8 +109,7 @@ Commands:
     build      [options]      Build packages.
     upload                    UploadDeplo packages.
     download                  Download rel.
-    upgrade    <version>      Upload rel.
-    downgrade  <version>      Hot deploy server.
+    upgrade                   Upload rel.
     deployed                  Deployed versions.
     remove                    Removing before versions.
     restart                   Restarting servers
