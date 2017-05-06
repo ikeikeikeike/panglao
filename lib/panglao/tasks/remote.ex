@@ -14,9 +14,13 @@ defmodule Panglao.Tasks.Remote do
   end
 
   defp downloaded do
-    objects = Repo.all(from Object.with_download, order_by: fragment("RANDOM()"), limit: 100)
+    queryable =
+      from q in Object.with_download,
+        where: q.inserted_at > datetime_add(^Ecto.DateTime.utc, -4, "hour"),
+        order_by: fragment("RANDOM()"),
+        limit: 100
 
-    Enum.map(objects, fn object ->
+    Enum.map(Repo.all(queryable), fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Progress.get(object.url),
            {:ok, object} <- Repo.update(Object.changeset(object, %{"stat" => "DOWNLOADED"})) do
         object

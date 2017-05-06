@@ -5,7 +5,7 @@ defmodule Panglao.Tasks.Cleanup do
       "-maxdepth", "1" ,
       "-type", "f",
       "-user", System.get_env["USER"],
-      "-mmin", "+600",
+      "-mmin", "+350",
       "-exec", "rm", "{}", "\\;"]
 
     :os.cmd 'find #{Enum.join args, " "}'
