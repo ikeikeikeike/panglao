@@ -1,14 +1,13 @@
 defmodule Panglao.Api.V1.RemoteController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object.Remote, Object.Q, Object.Progress, Mapper, Hash, Object}
+  alias Panglao.{Object.Remote, Object.Q, Object.Progress, Mapper}
 
   def upload(conn, %{"url" => url}) do
     user_id  = conn.assigns.current_user.id
     params   = %{"user_id" => user_id, "remote" => url}
 
     spawn fn -> Remote.upload params end
-    Exq.enqueue Exq, "default", Panglao.Tasks.Remote, []
 
     json conn, %{message: "ok"}
   end

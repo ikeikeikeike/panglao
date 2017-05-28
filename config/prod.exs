@@ -66,7 +66,7 @@ config :logger,
 #
 
 config :panglao, :object,
-  expires: 336  # hours
+  expires: 720  # Hours, 30days
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.

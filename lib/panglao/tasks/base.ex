@@ -1,12 +1,13 @@
 defmodule Panglao.Tasks.Base do
   alias Panglao.Repo
+
   require Logger
 
   def setback(st, err) do
     Logger.warn "Setback\nErr:#{inspect err}\nSt:#{inspect st}"
 
     Repo.rollback(st)
-    ExSentry.capture_exception(err)
+    # ExSentry.capture_exception(err)
   end
 
   def skip(%{} = st), do: skip st, ""

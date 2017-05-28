@@ -1,29 +1,14 @@
 defmodule Panglao.ObjectUploader do
   use Arc.Definition
-  use Arc.Ecto.Definition
 
-  alias Panglao.{Hash, Helpers, Router, Endpoint, Render}
+  alias Panglao.{Router, Endpoint, Render}
 
   @env Application.get_env(:panglao, :env)
   @cdnenv Application.get_env(:panglao, :cheapcdn)
 
+  @versions [:original]
   # @extension_whitelist ~w(.mp4 .flv)
-  @versions [:original, :screenshot]
-  @acl :public_read
-
-  def transform(:screenshot, _) do
-    conv = fn(input, output) ->
-      try do
-        Thumbnex.create_thumbnail input, output, max_width: 700, max_height: 430
-      rescue _ ->
-        File.write output, Panglao.File.decode_datauri(Helpers.fallback)
-      end
-
-      output
-    end
-
-    {:file, conv, :jpg}
-  end
+  # @acl :public_read
 
   def validate({_file, _}) do
     # file_extension = file.file_name |> Path.extname |> String.downcase
@@ -40,64 +25,45 @@ defmodule Panglao.ObjectUploader do
   # def __storage, do: Arc.Storage.S3
 
   def filename(_version, {file, _model}) do
-    Path.basename(compatible_name(file), Path.extname(compatible_name(file)))
-    |> Hash.short
+    Path.basename compatible_name(file), Path.extname(compatible_name(file))
   end
 
-  def storage_dir(_version, {_file, model}) do
-    Hash.short model.id
+  def storage_dir(_version, {_file, _model}) do
+    ""
   end
 
-  defp file_ext(version, {file, _model}) do
-    case version do
-      :original   ->
-        Path.extname(compatible_name(file))
-      :screenshot ->
-        ".jpg"
-    end
-  end
-
-  defp joinpath(version, {file, scope}) do
-    dir  = storage_dir version, {file, scope}
-    name = filename version, {file, scope}
-    ext  = file_ext version, {file, scope}
-
-    Path.join dir, [name, ext]
+  def transform(:screenshot, _) do
+    {nil, nil, :jpg}
   end
 
   def local_url(name, version \\ :screenshot)
 
   def local_url({file, scope}, version) do
     file  = file || %Arc.File{file_name: scope.name}
-
-    fext  = file_ext(version, {file, scope})
-    fname = "#{Hash.short(scope.id)}#{fext}"
-    fdir  = Path.join System.user_home, "priv/static/splash"
+    fdir  = Path.join splash_dir(), "priv/static/splash"
+    fname = Path.basename url({file, scope}, version)
     fpath = Path.join fdir, fname
 
-    if @env == :dev do
-      develop_url {file, scope}, version
-    else
-      unless File.exists?(fpath) do
-        fimg = develop_url {file, scope}, version
-        File.mkdir_p fdir
-        File.write fpath, HTTPoison.get!(fimg).body
-      end
+    unless File.exists?(fpath) do
+      fimg = auth_url {file, scope}, version
+      File.mkdir_p fdir
+      File.write fpath, HTTPoison.get!(fimg).body
+    end
 
-      Router.Helpers.static_url(Endpoint, "/splash/#{fname}")
-      |> Render.secure_url
+    src = Router.Helpers.static_url Endpoint, "/splash/#{fname}"
+    case @env do
+      :prod ->
+        Render.secure_url src
+      _     ->
+        src
     end
   end
-  def local_url(scope, version) do
+  def local_url(scope, _version) do
     local_url {nil, scope}
   end
 
   def default_url(:original) do
     "https://placehold.it/700x800&txt=SAMPLE IMAGE"
-  end
-
-  def develop_url({file, scope}, version \\ :original) do
-    Path.join(Enum.random(@cdnenv[:objects]), joinpath(version, {file, scope}))
   end
 
   def auth_url(tuple, version \\ :original)
@@ -113,19 +79,29 @@ defmodule Panglao.ObjectUploader do
 
   defp fetch_auth_url({path, file, scope}, version) do
     opt = [hackney: [basic_auth: @cdnenv[:auth]]]
-    o = joinpath(version, {file, scope})
+    o   = Path.basename url({file, scope}, version)
 
-    h = "#{@cdnenv[:gateway]}&object=#{o}" <> path
-    b = Poison.decode! HTTPoison.get!(h, [], opt).body
+    h   = "#{@cdnenv[:gateway]}&object=#{o}" <> path
+    key = Poison.decode! HTTPoison.get!(h, [], opt).body
 
-    u1 = URI.parse "#{url({file, scope}, version)}&cdnkey=#{b["key"]}"
-    u2 = URI.parse b["host"]
-
-    %{u1 | host: u2.host, authority: u2.authority, scheme: u2.scheme}
-    |> to_string
+    "#{url({file, scope}, version)}?cdnkey=#{key}"
   end
 
+  defp compatible_name(file)
+    when is_binary(file) or is_atom(file) do
+    file
+  end
   defp compatible_name(file) do
     Map.get file, :file_name, Map.get(file, :filename)
   end
+
+  defp splash_dir do
+    case @env do
+      :prod ->
+        System.user_home
+      _    ->
+        File.cwd!
+    end
+  end
+
 end

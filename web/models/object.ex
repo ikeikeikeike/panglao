@@ -1,8 +1,7 @@
 defmodule Panglao.Object do
   use Panglao.Web, :model
-  use Arc.Ecto.Schema
 
-  alias Panglao.{User, ObjectUploader, Hash}
+  alias Panglao.{User, Hash}
 
   @derive {Poison.Encoder, only: ~w(name slug stat src inserted_at updated_at)a}
   schema "objects" do
@@ -15,23 +14,22 @@ defmodule Panglao.Object do
     field :remote, :string
 
     field :stat, :string, default: "NONE"
-    field :src, ObjectUploader.Type
+    field :src, :string
 
     timestamps()
   end
 
   @requires ~w()a
-  @castable ~w(name stat slug remote url user_id)a
-  @attaches ~w(src)a
+  @castable ~w(src name stat slug remote url user_id)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE UPLOADING DOWNLOADED
+    REMOTE DOWNLOAD
     PENDING STARTED FAILURE SUCCESS
     REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD DOWNLOAD_FAILURE DOWNLOAD_FILEMAXSIZE UPLOADING DOWNLOADED)
+    struct.stat in ~w(REMOTE DOWNLOAD)
   end
 
   def object?(struct) do
@@ -50,18 +48,9 @@ defmodule Panglao.Object do
   def remote_changeset(struct, params \\ %{}) do
     struct
     |> changeset(params)
-    |> validate_required(~w(remote)a)
+    |> validate_required(~w(user_id url remote name)a)
     |> put_change(:stat, "REMOTE")
-    |> put_change(:url, params["remote"])
     |> put_change(:slug, Hash.randstring(3))
-  end
-
-  def download_changeset(struct, params \\ %{}) do
-    struct
-    |> changeset(params)
-    |> validate_required(~w(remote)a)
-    |> put_change(:name, Path.basename params["remote"])
-    |> put_change(:stat, "DOWNLOAD")
   end
 
   def object_changeset(struct, params \\ %{}) do
@@ -69,7 +58,6 @@ defmodule Panglao.Object do
     |> changeset(params)
     |> put_change(:stat, "PENDING")
     |> put_change(:slug, Hash.randstring(3))
-    |> cast_attachments(params, @attaches)
   end
 
   def remove_changeset(struct, params \\ %{}) do
@@ -119,26 +107,6 @@ defmodule Panglao.Object do
     where: q.stat == "DOWNLOAD"
   end
 
-  def with_download_failure(query \\ __MODULE__) do
-    from q in query,
-    where: q.stat == "DOWNLOAD_FAILURE"
-  end
-
-  def with_download_filemaxsize(query \\ __MODULE__) do
-    from q in query,
-    where: q.stat == "DOWNLOAD_FILEMAXSIZE"
-  end
-
-  def with_downloaded(query \\ __MODULE__) do
-    from q in query,
-    where: q.stat == "DOWNLOADED"
-  end
-
-  def with_uploading(query \\ __MODULE__) do
-    from q in query,
-    where: q.stat == "UPLOADING"
-  end
-
   def with_remote(query \\ __MODULE__) do
     from q in query,
     where: q.stat in ~w(REMOTE DOWNLOAD)
@@ -146,7 +114,7 @@ defmodule Panglao.Object do
 
   def with_filer(query \\ __MODULE__) do
     from q in query,
-    where: not q.stat in ~w(NONE REMOTE DOWNLOAD UPLOADING DOWNLOADED)
+    where: not q.stat in ~w(NONE REMOTE DOWNLOAD)
   end
 
   @expires Application.get_env(:panglao, :object)[:expires]

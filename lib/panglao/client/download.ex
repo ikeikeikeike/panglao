@@ -24,4 +24,8 @@ defmodule Panglao.Client.Download do
     end
   end
 
+  def remote_upload(url) do
+    get url
+  end
+
 end

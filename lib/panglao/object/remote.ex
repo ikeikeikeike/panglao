@@ -1,6 +1,6 @@
 defmodule Panglao.Object.Remote do
 
-  alias Panglao.{Repo, Object, Client}
+  alias Panglao.{Repo, Object, Client.Info, Client.Download}
 
   def upload(%{"user_id" => user_id, "remote" => remote} = params) do
     case Repo.get_by(Object, user_id: user_id, url: remote) do
@@ -13,8 +13,8 @@ defmodule Panglao.Object.Remote do
     end
   end
   defp upfile(params, object \\ %Object{}) do
-    body =
-      case Client.Info.get(params["remote"]) do
+    precheck =
+      case Info.get(params["remote"]) do
         {:ok, %HTTPoison.Response{status_code: 200} = r} ->
           r.body
         _ ->
@@ -22,10 +22,9 @@ defmodule Panglao.Object.Remote do
       end
 
     Repo.transaction fn  ->
-      with %{}           <- body,
-           {:ok, object} <- Repo.insert_or_update(Object.remote_changeset(object, params)),
-           {:ok,      _} <- Client.Download.get(object.remote),
-           {:ok, object} <- Repo.update(Object.download_changeset(object, %{"remote" => body["outputfile"]})) do
+      with %{} <- precheck,
+           {:ok, %{body: body}} <- Download.remote_upload(params["remote"]),
+           {:ok, object} <- upsert_object(object, params, body) do
 
         object
       else
@@ -41,4 +40,14 @@ defmodule Panglao.Object.Remote do
     end
   end
 
+  defp upsert_object(object, params, body) do
+    merged = %{
+      "user_id" => params["user_id"],
+      "url" => params["remote"] || body["webpage_url"],
+      "name" => body["title"],
+      "remote" => body["outfile"],
+    }
+
+    Repo.insert_or_update Object.remote_changeset(object, merged)
+  end
 end

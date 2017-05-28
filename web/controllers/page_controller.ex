@@ -14,7 +14,7 @@ defmodule Panglao.PageController do
     qs =
       from q in Object,
         where: q.id == ^id
-           and q.name == ^name,
+           and q.src == ^name,
         limit: 1
 
     render conn, "direct.html", object: Repo.one!(qs)
@@ -34,7 +34,7 @@ defmodule Panglao.PageController do
     qs =
       from q in Object,
         where: q.id == ^id
-           and q.name == ^name,
+           and q.src == ^name,
         limit: 1
     conn
     |> put_resp_header("X-Frame-Options", "ALLOWALL")

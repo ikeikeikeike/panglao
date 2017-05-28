@@ -1,12 +1,12 @@
-defmodule Panglao.Client.Progress do
+defmodule Panglao.Client.Removefile do
   use HTTPoison.Base
 
-  @endpoint Application.get_env(:panglao, :endpoint)[:progress]
+  @endpoint Application.get_env(:panglao, :endpoint)[:removefile]
   @agents Application.get_env(:panglao, :user_agents)
   @options [connect_timeout: 60_000, recv_timeout: 60_000, timeout: 60_000]
 
-  def process_url(url) do
-    @endpoint <> Base.encode64(url)
+  def process_url(key) do
+    @endpoint <> Base.encode64(key)
   end
 
   def process_request_headers(headers) do
@@ -24,8 +24,8 @@ defmodule Panglao.Client.Progress do
     end
   end
 
-  def progress(key) do
-    get Path.basename(Path.rootname(key))
+  def removefile(key) do
+    get key
   end
 
 end
