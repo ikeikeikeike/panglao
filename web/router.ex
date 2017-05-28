@@ -122,6 +122,7 @@ defmodule Panglao.Router do
 
       get "/link", ObjectController, :link
       get "/info", ObjectController, :info
+      get "/alive", ObjectController, :alive
       get "/rename", ObjectController, :rename
       get "/upload", ObjectController, :upload
       get "/splash", ObjectController, :splash

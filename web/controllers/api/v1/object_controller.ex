@@ -8,6 +8,11 @@ defmodule Panglao.Api.V1.ObjectController do
     json conn, user.id
   end
 
+  def alive(conn, %{"url" => url}) do
+    user = conn.assigns.current_user
+    json conn, Q.get!(%{"user_id" => user.id, "url" => url})
+  end
+
   def info(conn, %{"id" => _hash} = params) do
     obj = Q.get!(params)
 
