@@ -6,7 +6,7 @@ config :quantum,
 config :quantum, :panglao,
   cron: [
     remote_perform: [
-      schedule: "* * * * *",
+      schedule: "*/3 * * * *",
       task: "Panglao.Tasks.Remote.perform",
       args: []
     ],
