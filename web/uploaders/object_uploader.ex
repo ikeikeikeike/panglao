@@ -74,6 +74,7 @@ defmodule Panglao.ObjectUploader do
 
   def auth_url({conn, file, scope}, version) do
     ip = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
+
     fetch_auth_url {"&ipaddr=#{ip}", file, scope}, version
   end
 
