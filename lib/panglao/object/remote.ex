@@ -1,6 +1,6 @@
 defmodule Panglao.Object.Remote do
 
-  alias Panglao.{Repo, Object, Client.Info, Client.Download}
+  alias Panglao.{Repo, Object, Tasks, Client.Info, Client.Download}
 
   def upload(%{"user_id" => user_id, "remote" => remote} = params) do
     case Repo.get_by(Object, user_id: user_id, url: remote) do
@@ -25,6 +25,8 @@ defmodule Panglao.Object.Remote do
       with %{} <- precheck,
            {:ok, %{body: body}} <- Download.remote_upload(params["remote"]),
            {:ok, object} <- upsert_object(object, params, body) do
+
+        Exq.enqueue Exq, "default", Tasks.Remote2, [object.id]
 
         object
       else

@@ -3,6 +3,8 @@ defmodule Panglao.Tasks.Remote do
 
   alias Panglao.{Repo, Object, Tasks, ObjectUploader, Client.Progress}
 
+  require Logger
+
   def perform do
     queryable =
       from q in Object.with_remote,
@@ -22,8 +24,8 @@ defmodule Panglao.Tasks.Remote do
       else
         # {:ok, %{body: %{}}} ->
           # Repo.update!(Object.changeset(object, %{"stat" => "DOWNLOAD_FAILURE"}))
-        _msg ->
-          # IO.inspect msg
+        msg ->
+          Logger.error(inspect msg)
           :try_again
       end
     end

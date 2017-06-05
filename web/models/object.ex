@@ -23,13 +23,13 @@ defmodule Panglao.Object do
   @castable ~w(src name stat slug remote url user_id)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD
+    REMOTE DOWNLOAD WRONG
     PENDING STARTED FAILURE SUCCESS
     REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD)
+    struct.stat in ~w(REMOTE DOWNLOAD WRONG)
   end
 
   def object?(struct) do
@@ -90,6 +90,11 @@ defmodule Panglao.Object do
   def with_started(query \\ __MODULE__) do
     from q in query,
     where: q.stat == "STARTED"
+  end
+
+  def with_wrong(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "WRONG"
   end
 
   def with_failure(query \\ __MODULE__) do

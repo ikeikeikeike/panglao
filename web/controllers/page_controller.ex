@@ -6,7 +6,6 @@ defmodule Panglao.PageController do
   plug :put_layout, "page.html"
 
   def index(conn, _params) do
-    Exq.enqueue Exq, "default", Panglao.Tasks.Remote, []  # gotta remove
     render conn, "index.html"
   end
 
