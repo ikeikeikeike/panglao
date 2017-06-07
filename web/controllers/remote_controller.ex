@@ -1,7 +1,7 @@
 defmodule Panglao.RemoteController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object, Object.Remote, Client.Progress}
+  alias Panglao.{Object, Object.Remote, Client.Cheapcdn}
 
   def index(conn, _params) do
     objects = Repo.all Object.with_remote
@@ -9,7 +9,7 @@ defmodule Panglao.RemoteController do
   end
 
   def progress(conn, %{"remote" => remote}) do
-    case Progress.progress(remote) do
+    case Cheapcdn.progress(remote) do
       {:ok, r} ->
         json conn, Enum.into(r.body, %{})
 

@@ -1,9 +1,9 @@
 defmodule Panglao.Object.Progress do
-  alias Panglao.{Client}
+  alias Panglao.{Client.Cheapcdn}
   alias Timex.Duration
 
   def get(%{url: _, remote: _} = o) do
-    case o.remote && Client.Progress.progress(o.remote) do
+    case o.remote && Cheapcdn.progress(o.remote) do
       {:ok, %{body: b}} when map_size(b) <= 0 ->
         fallback o
       {:ok, %{body: b}} ->

@@ -1,10 +1,11 @@
 defmodule Panglao.ObjectUploader do
   use Arc.Definition
 
-  alias Panglao.{Router, Endpoint, Render}
+  alias Panglao.{Router, Endpoint, Render, Client.Cheapcdn}
+
+  require Logger
 
   @env Application.get_env(:panglao, :env)
-  @cdnenv Application.get_env(:panglao, :cheapcdn)
 
   @versions [:original]
   # @extension_whitelist ~w(.mp4 .flv)
@@ -69,23 +70,25 @@ defmodule Panglao.ObjectUploader do
   def auth_url(tuple, version \\ :original)
 
   def auth_url({file, scope}, version) do
-    fetch_auth_url {"", file, scope}, version
+    fetch_auth_url {%{}, file, scope}, version
   end
 
   def auth_url({conn, file, scope}, version) do
     ip = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
-
-    fetch_auth_url {"&ipaddr=#{ip}", file, scope}, version
+    fetch_auth_url {%{"ipaddr" => ip}, file, scope}, version
   end
 
-  defp fetch_auth_url({path, file, scope}, version) do
-    opt = [hackney: [basic_auth: @cdnenv[:auth]]]
-    o   = Path.basename url({file, scope}, version)
+  defp fetch_auth_url({params, file, scope}, version) do
+    filename = Path.basename url({file, scope}, version)
+    params = Map.merge %{"object" => filename}, params
 
-    h   = "#{@cdnenv[:gateway]}&object=#{o}" <> path
-    key = Poison.decode! HTTPoison.get!(h, [], opt).body
-
-    "#{url({file, scope}, version)}?cdnkey=#{key}"
+    with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
+         url when is_binary(url) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
+      url
+    else error ->
+      Logger.warn("[fetch_auth_url] #{inspect error}")
+      ""
+    end
   end
 
   defp compatible_name(file)

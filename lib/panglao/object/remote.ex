@@ -1,6 +1,6 @@
 defmodule Panglao.Object.Remote do
 
-  alias Panglao.{Repo, Object, Tasks, Client.Info, Client.Download}
+  alias Panglao.{Repo, Object, Tasks, Client.Cheapcdn}
 
   def upload(%{"user_id" => user_id, "remote" => remote} = params) do
     case Repo.get_by(Object, user_id: user_id, url: remote) do
@@ -14,7 +14,7 @@ defmodule Panglao.Object.Remote do
   end
   defp upfile(params, object \\ %Object{}) do
     precheck =
-      case Info.get(params["remote"]) do
+      case Cheapcdn.info(params["remote"]) do
         {:ok, %HTTPoison.Response{status_code: 200} = r} ->
           r.body
         _ ->
@@ -23,7 +23,7 @@ defmodule Panglao.Object.Remote do
 
     Repo.transaction fn  ->
       with %{} <- precheck,
-           {:ok, %{body: body}} <- Download.remote_upload(params["remote"]),
+           {:ok, %{body: body}} <- Cheapcdn.remote_upload(params["remote"]),
            {:ok, object} <- upsert_object(object, params, body) do
 
         Exq.enqueue Exq, "default", Tasks.Remote2, [object.id]

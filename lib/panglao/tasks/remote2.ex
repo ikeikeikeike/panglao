@@ -1,5 +1,5 @@
 defmodule Panglao.Tasks.Remote2 do
-  alias Panglao.{Repo, Object, Tasks, ObjectUploader, Client.Progress, Client.Findfile}
+  alias Panglao.{Repo, Object, Tasks, ObjectUploader, Client.Cheapcdn}
 
   require Logger
 
@@ -17,17 +17,22 @@ defmodule Panglao.Tasks.Remote2 do
   defp loop(%Object{id: id} = object, count)
       when is_integer(id) do
 
-    case Progress.progress(object.remote) do
-      {:ok, %{body: %{"status" => "finished"} = body}} ->
+    case Cheapcdn.progress(object.remote) do
+      {:ok, %{body: %{"status" => "finished"}}} ->
+        if filename = remotefile(object) do
+          object = rectify_remote(object, %{"filename" => filename})
+          object = pending object
 
-        object = object |> rectify_remote(body) |> evolve_src()
-        object = pending object
+          # Convert
+          Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
 
-        # Convert
-        Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+          # Make img and remove mp4
+          ObjectUploader.local_url {object.src, object}
 
-        # Make img and remove mp4
-        ObjectUploader.local_url {object.src, object}
+        else
+          wait()
+          loop object, count + 1
+        end
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
         rectify_remote object, body
@@ -36,8 +41,8 @@ defmodule Panglao.Tasks.Remote2 do
 
       _msg ->
         if count > @tries do
-          if evolve_src(object) do
-            pending object
+          if filename = remotefile(object) do
+            pending rectify_remote(object, %{"filename" => filename})
           else
             wrong object
           end
@@ -60,11 +65,12 @@ defmodule Panglao.Tasks.Remote2 do
   end
 
   @excludes ~w(.jpg .jpeg .gif .png .JPG)
-  defp evolve_src(object) do
-    with {:ok, %{body: %{"file" => file}}} when is_list(file) <- Findfile.findfile(object.remote),
+  defp remotefile(object) do
+    with {:ok, %{body: %{"file" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
          file when length(file) > 0 <- Enum.filter(file, & not Enum.member?(@excludes, Path.extname(&1))) do
-
-      rectify_remote(object, %{"filename" => List.first(file)})
+      List.first(file)
+    else _ ->
+      nil
     end
   end
 

@@ -1,7 +1,7 @@
 defmodule Panglao.Api.V1.ObjectController do
   use Panglao.Web, :controller
 
-  alias Panglao.{ObjectUploader, Object.Q, Client}
+  alias Panglao.{ObjectUploader, Object.Q, Client.Cheapcdn}
 
   def link(conn, _params) do
     user = conn.assigns.current_user
@@ -16,7 +16,7 @@ defmodule Panglao.Api.V1.ObjectController do
   def info(conn, %{"id" => _hash} = params) do
     obj = Q.get!(params)
 
-    case Client.Info.get(obj.url) do
+    case Cheapcdn.info(obj.url) do
       {:ok, %{body: body}} ->
         json conn, body
       _ ->
@@ -25,7 +25,7 @@ defmodule Panglao.Api.V1.ObjectController do
   end
   # No need auth
   def info(conn, %{"url" => url}) do
-    case Client.Info.get(url) do
+    case Cheapcdn.info(url) do
       {:ok, %{body: body}} ->
         json conn, body
       _ ->
