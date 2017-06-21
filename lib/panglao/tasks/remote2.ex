@@ -6,7 +6,7 @@ defmodule Panglao.Tasks.Remote2 do
   @tries 100
 
   defp wait do
-    :timer.sleep 15_000  # 15 sec
+    :timer.sleep 15_000  # 15 x 100 sec = 25 min
   end
 
   def perform(id) do
@@ -23,11 +23,13 @@ defmodule Panglao.Tasks.Remote2 do
           object = rectify_remote(object, %{"filename" => filename})
           object = pending object
 
-          # Convert
-          Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
-
           # Make img and remove mp4
           ObjectUploader.local_url {object.src, object}
+
+          :timer.sleep 5_000
+
+          # Convert
+          Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
 
         else
           wait()
@@ -35,7 +37,6 @@ defmodule Panglao.Tasks.Remote2 do
         end
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
-        rectify_remote object, body
         wait()
         loop object, count
 
@@ -64,7 +65,7 @@ defmodule Panglao.Tasks.Remote2 do
     end
   end
 
-  @excludes ~w(.jpg .jpeg .gif .png .JPG)
+  @excludes ~w(.jpg .jpeg .gif .png .JPG .m3u8)
   defp remotefile(object) do
     with {:ok, %{body: %{"file" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
          file when length(file) > 0 <- Enum.filter(file, & not Enum.member?(@excludes, Path.extname(&1))) do

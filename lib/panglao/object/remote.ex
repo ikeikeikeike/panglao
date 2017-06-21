@@ -8,6 +8,8 @@ defmodule Panglao.Object.Remote do
         upfile params
       %{stat: "REMOVED"} = object ->
         upfile params, object
+      %{stat: "REMOTE"} = object ->
+        Exq.enqueue Exq, "default", Tasks.Remote2, [object.id]
       object ->
         {:ok, object}
     end
