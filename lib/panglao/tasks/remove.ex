@@ -1,5 +1,5 @@
 defmodule Panglao.Tasks.Remove do
-  import Panglao.Tasks.Base
+  # import Panglao.Tasks.Base
 
   alias Panglao.{Repo, Object, Client.Cheapcdn}
 

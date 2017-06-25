@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.38"
+    v = "0.2.43"
     File.write! "VERSION", v
     v
   end
@@ -58,6 +58,8 @@ defmodule Panglao.Mixfile do
        :comeonin,
        :ex_crypto,
 
+       :bamboo,
+
        :guardian, :guardian_db,
        :ueberauth, :ueberauth_identity,
        # :ueberauth_github, :ueberauth_facebook, :ueberauth_google, :ueberauth_twitter, :ueberauth_slack
@@ -78,6 +80,7 @@ defmodule Panglao.Mixfile do
         :exactor,
         :sitemap,
         :xml_builder,
+        :recaptcha,
       ]
     ]
   end
@@ -102,8 +105,8 @@ defmodule Panglao.Mixfile do
 
       {:poison, "~> 3.1", override: true},
       {:yamerl, "~> 0.4", override: true},
-      {:hackney, "~> 1.6", override: true},
-      {:httpoison, "~> 0.11.1"},
+      {:hackney, "~> 1.8", override: true},
+      {:httpoison, ">= 0.11.1", override: true},
 
       {:ex_aws, "~> 1.1"},
       {:arc, "~> 0.7"},
@@ -139,6 +142,9 @@ defmodule Panglao.Mixfile do
       {:phoenix_html_simplified_helpers, "~> 1.1"},
 
       {:remote_ip, "~> 0.1"},
+      {:recaptcha, "~> 2.1"},
+
+      {:bamboo, "~> 0.8"},
 
       {:exsyslog, "~> 1.0"},
       {:sitemap, ">= 0.0.0"},

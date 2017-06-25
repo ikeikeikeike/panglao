@@ -52,6 +52,16 @@ defmodule Panglao.Router do
     # get "/splash", PageController, :splash
   end
 
+  scope "/-", Panglao do
+    pipe_through :browser # Use the default browser stack
+
+    get "/policy", AboutController, :policy
+    get "/terms", AboutController, :terms
+    get "/contact", AboutController, :contact
+    get "/dmca", AboutController, :dmca
+    post "/dmca", AboutController, :dmca
+  end
+
   scope "/", Panglao do
     pipe_through :embedable # Use the default browser stack
 
@@ -134,6 +144,10 @@ defmodule Panglao.Router do
       get "/upload", RemoteController, :upload
       get "/status", RemoteController, :status
     end
+  end
+
+  if Mix.env == :dev do
+    forward "/sent_emails", Bamboo.EmailPreviewPlug
   end
 
   # Other scopes may use custom stacks.

@@ -52,3 +52,4 @@ erl_crash.dump
 /BUILDING
 /PRODUCTION
 /venv
+/web/mails
