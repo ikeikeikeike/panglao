@@ -3,14 +3,14 @@ defmodule Panglao.Tasks.Remote2 do
 
   require Logger
 
-  @tries 200
+  @tries 50
 
-  defp wait(count) when count < 100 do
-    :timer.sleep 15_000         # 15 sec x 100 = 25 min
+  defp wait(count) when count >= 45 do
+    sec = round :math.pow(count + 50, 2)
+    :timer.sleep sec * 1000   # (X+50)**2 x 5 = 784 mins(13 hours)
   end
-
-  defp wait(count) do
-    :timer.sleep count * 1000   # count(100~200) sec x 100 = 250 min
+  defp wait(_count) do
+    :timer.sleep 15_000       # 15 sec x 45 = around 10 ~ 40 mins
   end
 
   def perform(id) do
@@ -37,12 +37,12 @@ defmodule Panglao.Tasks.Remote2 do
 
         else
           wait count
-          loop object, count + 10
+          loop object, count + 3
         end
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
         wait count
-        loop object, count + 1
+        loop object, count + Enum.random([0, 0, 0, 1])
 
       _msg ->
         if count > @tries do
@@ -54,7 +54,7 @@ defmodule Panglao.Tasks.Remote2 do
           :fetch_limited
         else
           wait count
-          loop object, count + 5
+          loop object, count + 1
         end
     end
   end
