@@ -3,10 +3,14 @@ defmodule Panglao.Tasks.Remote2 do
 
   require Logger
 
-  @tries 100
+  @tries 200
 
-  defp wait do
-    :timer.sleep 15_000  # 15 x 100 sec = 25 min
+  defp wait(count) when count < 100 do
+    :timer.sleep 15_000         # 15 sec x 100 = 25 min
+  end
+
+  defp wait(count) do
+    :timer.sleep count * 1000   # count(100~200) sec x 100 = 250 min
   end
 
   def perform(id) do
@@ -15,7 +19,7 @@ defmodule Panglao.Tasks.Remote2 do
 
   defp loop(object, count \\ 0)
   defp loop(%Object{id: id} = object, count)
-      when is_integer(id) do
+       when is_integer(id) do
 
     case Cheapcdn.progress(object.remote) do
       {:ok, %{body: %{"status" => "finished"}}} ->
@@ -32,13 +36,13 @@ defmodule Panglao.Tasks.Remote2 do
           Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
 
         else
-          wait()
-          loop object, count + 1
+          wait count
+          loop object, count + 10
         end
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
-        wait()
-        loop object, count
+        wait count
+        loop object, count + 1
 
       _msg ->
         if count > @tries do
@@ -49,8 +53,8 @@ defmodule Panglao.Tasks.Remote2 do
           end
           :fetch_limited
         else
-          wait()
-          loop object, count + 1
+          wait count
+          loop object, count + 5
         end
     end
   end
