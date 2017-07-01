@@ -35,6 +35,7 @@ erl_crash.dump
 /web/static/css
 /web/static/assets/images
 /web/static/assets/animation
+/web/static/assets/pgpg
 
 /web/static/js/ads.js
 /web/static/assets/prepare/common.js
