@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.48"
+    v = "0.2.50"
     File.write! "VERSION", v
     v
   end
@@ -60,6 +60,8 @@ defmodule Panglao.Mixfile do
 
        :bamboo,
 
+       :observer_cli,
+
        :guardian, :guardian_db,
        :ueberauth, :ueberauth_identity,
        # :ueberauth_github, :ueberauth_facebook, :ueberauth_google, :ueberauth_twitter, :ueberauth_slack
@@ -81,6 +83,8 @@ defmodule Panglao.Mixfile do
         :sitemap,
         :xml_builder,
         :recaptcha,
+
+        :cors_plug,
       ]
     ]
   end
@@ -132,6 +136,8 @@ defmodule Panglao.Mixfile do
 
       {:csv, "~> 1.4"},
 
+      {:cors_plug, "~> 1.2"},
+
       # Password hasher
       {:comeonin, "~> 3.0"},
       {:ex_crypto, "~> 0.3"},  # Need encrypt and decrypt.
@@ -149,6 +155,8 @@ defmodule Panglao.Mixfile do
       {:exsyslog, "~> 1.0"},
       {:sitemap, ">= 0.0.0"},
       {:distillery, "~> 1.3"},
+
+      {:observer_cli, "~> 1.1.0"},
 
       {:credo, "~> 0.7", only: [:dev, :test]},
     ]

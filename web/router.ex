@@ -43,6 +43,10 @@ defmodule Panglao.Router do
     plug Panglao.Plug.CurrentUser
   end
 
+  pipeline :cors do
+    plug CORSPlug, origin: "*"
+  end
+
   scope "/", Panglao do
     pipe_through :browser # Use the default browser stack
 
@@ -139,10 +143,16 @@ defmodule Panglao.Router do
     end
 
     scope "/remote" do
-      pipe_through [:api_required]
+      pipe_through [:cors, :api_required]
 
       get "/upload", RemoteController, :upload
+    end
+
+    scope "/remote" do
+      pipe_through [:cors, :api_required]
+
       get "/status", RemoteController, :status
+      options "/status", RemoteController, :status
     end
   end
 
