@@ -6,8 +6,8 @@ defmodule Panglao.Tasks.Remote2 do
   @tries 50
 
   defp wait(count) when count >= 45 do
-    sec = round :math.pow(count + 50, 2)
-    :timer.sleep sec * 1000   # (X+50)**2 x 5 = 784 mins(13 hours)
+    sec = round :math.pow(count + 15, 2)
+    :timer.sleep sec * 1000   # (X+15)**2 x 5 = 784 mins(5.34 hours)
   end
   defp wait(_count) do
     :timer.sleep 15_000       # 15 sec x 45 = around 10 ~ 40 mins

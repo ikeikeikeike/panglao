@@ -15,6 +15,8 @@ defmodule Panglao do
       # Start your own worker by calling: Panglao.Worker.start_link(arg1, arg2, arg3)
       # worker(Panglao.Worker, [arg1, arg2, arg3]),
 
+      :hackney_pool.child_spec(:cheapcdn, [max_connections: 10_000]),
+
       worker(GuardianDb.ExpiredSweeper, []),
     ]
 
