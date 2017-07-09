@@ -51,13 +51,8 @@ defmodule Panglao.ObjectUploader do
       File.write fpath, HTTPoison.get!(fimg).body
     end
 
-    src = Router.Helpers.static_url Endpoint, "/splash/#{fname}"
-    case @env do
-      :prod ->
-        Render.secure_url src
-      _     ->
-        src
-    end
+    Router.Helpers.static_url(Endpoint, "/splash/#{fname}")
+    |> Render.elastic_secure_url
   end
   def local_url(scope, _version) do
     local_url {nil, scope}
@@ -84,12 +79,7 @@ defmodule Panglao.ObjectUploader do
 
     with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
          url when is_binary(url) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
-      case @env do
-        :prod ->
-          Render.secure_url url
-        _     ->
-          url
-      end
+      Render.elastic_secure_url url
     else error ->
       Logger.warn("[fetch_auth_url] #{inspect error}")
       ""
