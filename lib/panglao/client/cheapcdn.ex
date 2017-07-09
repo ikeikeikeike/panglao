@@ -21,10 +21,7 @@ defmodule Panglao.Client.Cheapcdn do
   end
 
   def process_request_options(options) do
-    Keyword.merge options, [
-      hackney: [pool: :panglao_elixir],
-      recv_timeout: 15_000, timeout: 15_000,
-    ]
+    Keyword.merge options, [recv_timeout: 15_000, timeout: 15_000]
   end
 
   def process_response_body(body) do

@@ -52,12 +52,13 @@ defmodule Panglao.ObjectUploader do
     end
 
     src = Router.Helpers.static_url Endpoint, "/splash/#{fname}"
-    case @env do
-      :prod ->
-        Render.secure_url src
-      _     ->
-        src
-    end
+    src
+    # case @env do
+      # :prod ->
+        # Render.secure_url src
+      # _     ->
+        # src
+    # end
   end
   def local_url(scope, _version) do
     local_url {nil, scope}
