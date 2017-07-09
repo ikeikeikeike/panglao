@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.55"
+    v = "0.2.57"
     File.write! "VERSION", v
     v
   end
@@ -154,7 +154,7 @@ defmodule Panglao.Mixfile do
 
       {:exsyslog, "~> 1.0"},
       {:sitemap, ">= 0.0.0"},
-      {:distillery, "~> 1.3"},
+      {:distillery, "~> 1.4"},
 
       {:observer_cli, "~> 1.1.0"},
 

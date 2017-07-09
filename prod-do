@@ -12,6 +12,12 @@ deploy() {
     upgrade $VERSION
 }
 
+before_deploy() {
+    build
+    download $VERSION
+    upload
+}
+
 version() {
     echo $VERSION
 }
@@ -50,8 +56,9 @@ upgrade() {
     # upgrade
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
     ssh ${USER}@${PRODUCTION} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
+    ssh ${USER}@${PRODUCTION} "sh rel/yavd/bin/panglao upgrade ${VERSION}"
 
-    restartsrv
+    # restartsrv
 
     echo;deployed
 }
@@ -89,6 +96,7 @@ deployed() {
 
 case "$1" in
     deploy)             deploy            ;;
+    before_deploy)      before_deploy     ;;
     version)            version           ;;
     fixversion)         fixversion        ;;
     build)              build             ;;
@@ -104,6 +112,7 @@ Usage:
 
 Commands:
     deploy                    Deployment all
+    before_deploy             Deploy until before upgrade
     version                   Get package version.
     fixversion <version>      Fix package version.
     build      [options]      Build packages.
