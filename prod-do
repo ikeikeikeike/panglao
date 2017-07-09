@@ -56,7 +56,7 @@ upgrade() {
     # upgrade
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
     ssh ${USER}@${PRODUCTION} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
-    ssh ${USER}@${PRODUCTION} "sh rel/yavd/bin/panglao upgrade ${VERSION}"
+    # ssh ${USER}@${PRODUCTION} "sh rel/yavd/bin/panglao upgrade ${VERSION}"
 
     # restartsrv
 

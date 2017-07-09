@@ -1,7 +1,7 @@
 defmodule Panglao.ObjectUploader do
   use Arc.Definition
 
-  alias Panglao.{Router, Endpoint, Render, Client.Cheapcdn}
+  alias Panglao.{Router, Endpoint, Client.Cheapcdn}
 
   require Logger
 
@@ -52,7 +52,6 @@ defmodule Panglao.ObjectUploader do
     end
 
     Router.Helpers.static_url(Endpoint, "/splash/#{fname}")
-    |> Render.elastic_secure_url
   end
   def local_url(scope, _version) do
     local_url {nil, scope}
@@ -79,7 +78,7 @@ defmodule Panglao.ObjectUploader do
 
     with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
          url when is_binary(url) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
-      Render.elastic_secure_url url
+      url
     else error ->
       Logger.warn("[fetch_auth_url] #{inspect error}")
       ""

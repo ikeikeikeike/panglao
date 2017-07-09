@@ -14,7 +14,7 @@ use Mix.Config
 myhost = String.trim(File.read!("config/myhost"))
 config :panglao, Panglao.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: myhost, port: 80],
+  url: [scheme: "https", host: myhost],
   cache_static_manifest: "priv/static/manifest.json",
   server: true,
   version: Mix.Project.config[:version]
