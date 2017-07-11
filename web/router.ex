@@ -8,6 +8,7 @@ defmodule Panglao.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug RemoteIp
+    plug Plug.CloudFlare
   end
 
   pipeline :browser_auth do
@@ -26,11 +27,13 @@ defmodule Panglao.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug RemoteIp
+    plug Plug.CloudFlare
   end
 
   pipeline :api do
     plug :accepts, ["json", "image", "html"]
     plug RemoteIp
+    plug Plug.CloudFlare
   end
 
   pipeline :api_auth do

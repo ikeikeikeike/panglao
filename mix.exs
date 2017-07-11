@@ -76,6 +76,7 @@ defmodule Panglao.Mixfile do
         :mogrify,
 
         :remote_ip,
+        :plug_cloudflare,
 
         :rdtype,
         :elixir_make,
@@ -148,6 +149,7 @@ defmodule Panglao.Mixfile do
       {:phoenix_html_simplified_helpers, "~> 1.1"},
 
       {:remote_ip, "~> 0.1"},
+      {:plug_cloudflare, "~> 1.3"},
       {:recaptcha, "~> 2.1"},
 
       {:bamboo, "~> 0.8"},
