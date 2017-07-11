@@ -10,6 +10,8 @@ deploy() {
     download $VERSION
     upload
     upgrade $VERSION
+    restartsrv
+    echo;deployed
 }
 
 before_deploy() {
@@ -56,24 +58,22 @@ upgrade() {
     # upgrade
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
     ssh ${USER}@${PRODUCTION} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
-    # ssh ${USER}@${PRODUCTION} "sh rel/yavd/bin/panglao upgrade ${VERSION}"
-
-    # restartsrv
-
-    echo;deployed
+    # ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao upgrade ${VERSION}"
 }
 
 restartsrv() {
     set +e
 
-    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
-    echo;echo "PRODUCTION OUT: $OUT"
-    ssh ${USER}@${PRODUCTION} "sudo systemctl restart phoenix"
-    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
-    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
-    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
-    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
-    echo "PRODUCTION OUT: $OUT"
+    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao restart"
+
+    #OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
+    #echo;echo "PRODUCTION OUT: $OUT"
+    #ssh ${USER}@${PRODUCTION} "sudo systemctl restart phoenix"
+    #ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    #ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    #ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    #OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
+    #echo "PRODUCTION OUT: $OUT"
 
     set -e
 }

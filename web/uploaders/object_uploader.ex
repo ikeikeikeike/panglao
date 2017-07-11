@@ -1,7 +1,7 @@
 defmodule Panglao.ObjectUploader do
   use Arc.Definition
 
-  alias Panglao.{Router, Endpoint, Render, Client.Cheapcdn}
+  alias Panglao.{Router, Endpoint, Client.Cheapcdn}
 
   require Logger
 
@@ -52,7 +52,6 @@ defmodule Panglao.ObjectUploader do
     end
 
     Router.Helpers.static_url(Endpoint, "/splash/#{fname}")
-    |> Render.elastic_secure_url
   end
   def local_url(scope, _version) do
     local_url {nil, scope}

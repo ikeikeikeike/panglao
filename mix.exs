@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.62"
+    v = "0.2.65"
     File.write! "VERSION", v
     v
   end
@@ -77,6 +77,7 @@ defmodule Panglao.Mixfile do
 
         :remote_ip,
         :plug_cloudflare,
+        :cidr,
 
         :rdtype,
         :elixir_make,
