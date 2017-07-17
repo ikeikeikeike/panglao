@@ -47,6 +47,14 @@ defmodule Panglao.Client.Cheapcdn do
     get Path.join(@cdnenv[:info], key)
   end
 
+  def nodeinfo do
+    get @cdnenv[:nodeinfo]
+  end
+
+  def abledisk do
+    get @cdnenv[:abledisk]
+  end
+
   def progress(key) do
     key = Base.encode64 Path.basename(Path.rootname(key))
     get Path.join(@cdnenv[:progress], key)

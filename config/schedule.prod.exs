@@ -15,6 +15,11 @@ config :quantum, :panglao,
       task: "Panglao.Tasks.Remove.perform",
       args: []
     ],
+    remove_perform_disksize: [
+      schedule: "*/5 * * * *",
+      task: "Panglao.Tasks.Remove.perform",
+      args: [:disksize]
+    ],
     cleanup_unses_files: [
       schedule: "*/5 * * * *",
       task: "Panglao.Tasks.Cleanup.unses_files",

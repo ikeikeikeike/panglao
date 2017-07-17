@@ -71,7 +71,7 @@ defmodule Panglao.Tasks.Remote2 do
 
   @excludes ~w(.jpg .jpeg .gif .png .JPG .m3u8)
   defp remotefile(object) do
-    with {:ok, %{body: %{"file" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
+    with {:ok, %{body: %{"root" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
          file when length(file) > 0 <- Enum.filter(file, & not Enum.member?(@excludes, Path.extname(&1))) do
       List.first(file)
     else _ ->
