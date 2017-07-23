@@ -17,7 +17,9 @@ defmodule Panglao.Api.V1.ObjectController do
     obj = Q.get!(params)
 
     case Cheapcdn.info(obj.url) do
-      {:ok, %{body: body}} ->
+      {:ok, %{body: %{"root" => _} = body}} ->
+        json conn, body
+      {:ok, %{body: %{"errno" => _} = body}} ->
         json conn, body
       _ ->
         json conn, %{}
@@ -26,7 +28,9 @@ defmodule Panglao.Api.V1.ObjectController do
   # No need auth
   def info(conn, %{"url" => url}) do
     case Cheapcdn.info(url) do
-      {:ok, %{body: body}} ->
+      {:ok, %{body: %{"root" => _} = body}} ->
+        json conn, body
+      {:ok, %{body: %{"errno" => _} = body}} ->
         json conn, body
       _ ->
         json conn, %{}

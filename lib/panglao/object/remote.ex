@@ -24,8 +24,8 @@ defmodule Panglao.Object.Remote do
       end
 
     Repo.transaction fn  ->
-      with %{} <- precheck,
-           {:ok, %{body: body}} <- Cheapcdn.remote_upload(params["remote"]),
+      with %{"root" => _} <- precheck,
+           {:ok, %{body: %{"root" => body}}} <- Cheapcdn.remote_upload(params["remote"]),
            {:ok, object} <- upsert_object(object, params, body) do
 
         Exq.enqueue Exq, "default", Tasks.Remote2, [object.id]
