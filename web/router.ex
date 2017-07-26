@@ -143,6 +143,14 @@ defmodule Panglao.Router do
       get "/rename", ObjectController, :rename
       get "/upload", ObjectController, :upload
       get "/splash", ObjectController, :splash
+      get "/audio", ObjectController, :audio
+    end
+    scope "/object" do
+      pipe_through [:cors, :api_required]
+
+      get     "/preview", ObjectController, :preview
+      post    "/preview", ObjectController, :preview
+      options "/preview", ObjectController, :preview
     end
 
     scope "/remote" do
@@ -150,7 +158,6 @@ defmodule Panglao.Router do
 
       get "/upload", RemoteController, :upload
     end
-
     scope "/remote" do
       pipe_through [:cors, :api_required]
 

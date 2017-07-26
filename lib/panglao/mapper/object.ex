@@ -1,7 +1,7 @@
 defmodule Panglao.Mapper.Object do
   import Panglao.Router.Helpers
 
-  alias Panglao.{Render}
+  # alias Panglao.{Render}
 
   def link(conn, %{object: o}) do
     %{

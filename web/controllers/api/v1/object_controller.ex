@@ -47,6 +47,34 @@ defmodule Panglao.Api.V1.ObjectController do
     json conn, user.id
   end
 
+  def audio(conn, %{"id" => _hash} = params) do
+    mp3 conn, Q.get!(params)
+  end
+
+  def audio(conn, %{"url" => url}) do
+    user = conn.assigns.current_user
+    mp3 conn, Q.get!(%{"user_id" => user.id, "url" => url})
+  end
+
+  defp mp3(conn, obj) do
+    arg = if obj.src, do: {obj.src, obj}, else: obj
+    json conn, %{src: ObjectUploader.auth_url(arg, :audio)}
+  end
+
+  def preview(conn, %{"id" => _hash} = params) do
+    mp4 conn, Q.get!(params)
+  end
+
+  def preview(conn, %{"url" => url}) do
+    user = conn.assigns.current_user
+    mp4 conn, Q.get!(%{"user_id" => user.id, "url" => url})
+  end
+
+  defp mp4(conn, obj) do
+    arg = if obj.src, do: {obj.src, obj}, else: obj
+    json conn, %{src: ObjectUploader.auth_url(arg, :preview)}
+  end
+
   def splash(conn, %{"id" => _hash} = params) do
     img conn, Q.get!(params)
   end

@@ -33,6 +33,12 @@ defmodule Panglao.ObjectUploader do
     ""
   end
 
+  def transform(:preview, _) do
+    {nil, nil, :"preview.mp4"}
+  end
+  def transform(:audio, _) do
+    {nil, nil, :mp3}
+  end
   def transform(:screenshot, _) do
     {nil, nil, :jpg}
   end
