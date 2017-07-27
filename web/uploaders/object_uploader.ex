@@ -33,6 +33,9 @@ defmodule Panglao.ObjectUploader do
     ""
   end
 
+  def transform(:movie, _) do
+    {nil, nil, :"mp4"}
+  end
   def transform(:preview, _) do
     {nil, nil, :"preview.mp4"}
   end
@@ -67,7 +70,7 @@ defmodule Panglao.ObjectUploader do
     "https://placehold.it/700x800&txt=SAMPLE IMAGE"
   end
 
-  def auth_url(tuple, version \\ :original)
+  def auth_url(tuple, version \\ :movie)
 
   def auth_url({file, scope}, version) do
     fetch_auth_url {%{}, file, scope}, version
@@ -83,8 +86,8 @@ defmodule Panglao.ObjectUploader do
     params = Map.merge %{"object" => filename}, params
 
     with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
-         url when is_binary(url) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
-      url
+         uri when is_binary(uri) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
+      uri
     else error ->
       Logger.warn("[fetch_auth_url] #{inspect error}")
       ""

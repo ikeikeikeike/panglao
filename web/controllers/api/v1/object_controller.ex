@@ -57,7 +57,7 @@ defmodule Panglao.Api.V1.ObjectController do
   end
 
   defp mp3(conn, obj) do
-    arg = if obj.src, do: {obj.src, obj}, else: obj
+    arg = {conn, obj.src, obj}
     json conn, %{src: ObjectUploader.auth_url(arg, :audio)}
   end
 
@@ -71,7 +71,7 @@ defmodule Panglao.Api.V1.ObjectController do
   end
 
   defp mp4(conn, obj) do
-    arg = if obj.src, do: {obj.src, obj}, else: obj
+    arg = {conn, obj.src, obj}
     json conn, %{src: ObjectUploader.auth_url(arg, :preview)}
   end
 
