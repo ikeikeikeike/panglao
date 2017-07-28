@@ -33,7 +33,8 @@ defmodule Panglao.Tasks.Remote2 do
           :timer.sleep 5_000
 
           # Convert
-          Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+          # Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+          Tasks.Encode.perform object.id
 
         else
           wait count
@@ -69,7 +70,7 @@ defmodule Panglao.Tasks.Remote2 do
     end
   end
 
-  @excludes ~w(.jpg .jpeg .gif .png .JPG .m3u8)
+  @excludes ~w(.jpg .jpeg .gif .png .JPG .m3u8 .mp3 .preview.mp4)
   defp remotefile(object) do
     with {:ok, %{body: %{"root" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
          file when length(file) > 0 <- Enum.filter(file, & not Enum.member?(@excludes, Path.extname(&1))) do

@@ -66,8 +66,11 @@ defmodule Panglao.ObjectUploader do
     local_url {nil, scope}
   end
 
-  def default_url(:original) do
+  def default_url(:screenshot) do
     "https://placehold.it/700x800&txt=SAMPLE IMAGE"
+  end
+  def default_url(_) do
+    nil
   end
 
   def auth_url(tuple, version \\ :movie)
