@@ -154,9 +154,10 @@ defmodule Panglao.Router do
     end
 
     scope "/remote" do
-      pipe_through [:cors, :api_required]
+      pipe_through [:api_required]
 
       get "/upload", RemoteController, :upload
+      get "/support", RemoteController, :support
     end
     scope "/remote" do
       pipe_through [:cors, :api_required]

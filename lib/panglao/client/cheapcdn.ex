@@ -77,4 +77,16 @@ defmodule Panglao.Client.Cheapcdn do
     get Path.join(@cdnenv[:removefile], key)
   end
 
+  def extractors do
+    get @cdnenv[:extractors]
+  end
+  def extractors! do
+    case extractors() do
+      {:ok, body} ->
+        body
+      {:error, error} ->
+        raise error
+    end
+  end
+
 end

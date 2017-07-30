@@ -1,7 +1,11 @@
 defmodule Panglao.Api.V1.RemoteController do
   use Panglao.Web, :controller
 
-  alias Panglao.{Object.Remote, Object.Q, Object.Progress, Mapper}
+  alias Panglao.{Object.Remote, Object.Q, Object.Progress, Mapper, Client.Cheapcdn}
+
+  def support(conn, _params) do
+    json conn, Cheapcdn.extractors!.body["root"]
+  end
 
   def upload(conn, %{"url" => url}) do
     user_id  = conn.assigns.current_user.id
@@ -25,5 +29,4 @@ defmodule Panglao.Api.V1.RemoteController do
 
     json conn, Map.merge(r, b)
   end
-
 end
