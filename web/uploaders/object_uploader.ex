@@ -84,6 +84,9 @@ defmodule Panglao.ObjectUploader do
     fetch_auth_url {%{"ipaddr" => ip}, file, scope}, version
   end
 
+  defp fetch_auth_url({_params, nil, _scope}, _version) do
+    ""
+  end
   defp fetch_auth_url({params, file, scope}, version) do
     filename = Path.basename url({file, scope}, version)
     params = Map.merge %{"object" => filename}, params
@@ -91,8 +94,8 @@ defmodule Panglao.ObjectUploader do
     with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
          uri when is_binary(uri) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
       uri
-    else error ->
-      Logger.warn("[fetch_auth_url] #{inspect error}")
+    else _error ->
+      # Logger.warn("[fetch_auth_url] #{inspect error}")
       ""
     end
   end
