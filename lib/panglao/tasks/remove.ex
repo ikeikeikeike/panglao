@@ -12,7 +12,7 @@ defmodule Panglao.Tasks.Remove do
 
   def perform(:disksize) do
     with {:ok, %{body: %{"root" => false}}} <- Cheapcdn.abledisk do
-      from(q in Object, where: q.stat != "REMOVED", order_by: :id, limit: 500)
+      from(q in Object, where: q.stat != "REMOVED", order_by: :id, limit: 200)
       |> Repo.all
       |> remove()
     end
