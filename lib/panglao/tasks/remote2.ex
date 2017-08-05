@@ -24,18 +24,7 @@ defmodule Panglao.Tasks.Remote2 do
     case Cheapcdn.progress(object.remote) do
       {:ok, %{body: %{"status" => "finished"}}} ->
         if filename = remotefile(object) do
-          object = rectify_remote(object, %{"filename" => filename})
-          object = pending object
-
-          # Make img and remove mp4
-          ObjectUploader.local_url {object.src, object}
-
-          :timer.sleep 5_000
-
-          # Convert
-          # Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
-          Tasks.Encode.perform object.id
-
+          succeed object, filename
         else
           wait count
           loop object, count + 3
@@ -48,7 +37,7 @@ defmodule Panglao.Tasks.Remote2 do
       _msg ->
         if count > @tries do
           if filename = remotefile(object) do
-            pending rectify_remote(object, %{"filename" => filename})
+            succeed object, filename
           else
             wrong object
           end
@@ -78,6 +67,20 @@ defmodule Panglao.Tasks.Remote2 do
     else _ ->
       nil
     end
+  end
+
+  defp succeed(object, filename) do
+    object = rectify_remote(object, %{"filename" => filename})
+    object = pending object
+
+    # Make img and remove mp4
+    ObjectUploader.local_url {object.src, object}
+
+    :timer.sleep 5_000
+
+    # Convert
+    # Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
+    Tasks.Encode.perform object.id
   end
 
   defp wrong(object) do
