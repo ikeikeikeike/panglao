@@ -73,10 +73,14 @@ defmodule Panglao.Tasks.Remote2 do
     object = rectify_remote(object, %{"filename" => filename})
     object = pending object
 
-    # Make img and remove mp4
-    ObjectUploader.local_url {object.src, object}
-
-    :timer.sleep 5_000
+    try do
+      # Make image to filesystem and remove mp4
+      ObjectUploader.local_url {object.src, object}
+    rescue err ->
+      Logger.warn("prepare make image: #{inspect err}")
+    catch err ->
+      Logger.warn("prepare make image: #{inspect err}")
+    end
 
     # Convert
     # Exq.enqueue Exq, "encoder", Tasks.Encode, [object.id]
