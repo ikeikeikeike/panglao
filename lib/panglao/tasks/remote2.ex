@@ -74,7 +74,7 @@ defmodule Panglao.Tasks.Remote2 do
     object = pending object
 
     try do
-      # Make image to filesystem and remove mp4
+      # Create image to filesystem
       ObjectUploader.local_url {object.src, object}
     rescue err ->
       Logger.warn("prepare make image: #{inspect err}")
