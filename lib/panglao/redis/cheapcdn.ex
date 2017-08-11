@@ -7,7 +7,7 @@ defmodule Panglao.Redis.Cheapcdn do
   end
 
   defp hkey(key) do
-    :crypto.hash(:md5, '#{key}')
+    :crypto.hash(:md5, '#{URI.encode key}')
     |> Base.encode16(case: :lower)
   end
 
