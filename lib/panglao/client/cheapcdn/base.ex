@@ -8,9 +8,10 @@ defmodule Panglao.Client.Cheapcdn.Base do
         @cdnenv unquote(opts[:host])
 
         def cdnenv, do: @cdnenv
+        def endpoint, do: @cdnenv[:endpoint]
 
         def process_url(path) do
-          Path.join @cdnenv[:endpoint], path
+          Path.join endpoint(), path
         end
 
         def process_request_body(body) do
@@ -56,9 +57,21 @@ defmodule Panglao.Client.Cheapcdn.Base do
         def nodeinfo do
           get @api[:nodeinfo]
         end
+        def nodeinfo! do
+          case nodeinfo() do
+            {:ok, response} -> response
+            {:error, error} -> raise error
+          end
+        end
 
         def abledisk do
           get @api[:abledisk]
+        end
+        def abledisk! do
+          case abledisk() do
+            {:ok, response} -> response
+            {:error, error} -> raise error
+          end
         end
 
         def progress(key) do
@@ -88,10 +101,8 @@ defmodule Panglao.Client.Cheapcdn.Base do
         end
         def extractors! do
           case extractors() do
-            {:ok, body} ->
-              body
-            {:error, error} ->
-              raise error
+            {:ok, response} -> response
+            {:error, error} -> raise error
           end
         end
 
@@ -102,6 +113,8 @@ defmodule Panglao.Client.Cheapcdn.Base do
 
   defmacro __using__(_) do
     quote do
+      alias Panglao.Redis.Cheapcdn, as: State
+
       @hosts Enum.with_index(
         Application.get_env(:panglao, :cheapcdn)[:host], 1
       )
@@ -120,20 +133,67 @@ defmodule Panglao.Client.Cheapcdn.Base do
         @clients
       end
 
-      def random_choice do
-        Enum.random @clients
+      def gateway(id, params) do
+        choice(id).gateway params
       end
 
-      def weighted_choice do
-        Enum.random @clients
+      def info(id, key) do
+        choice(id).info key
       end
 
-      def better_choice do
+      def nodeinfo do
+        Enum.map @clients, & {&1, &1.nodeinfo!}
+      end
+
+      def progress(id, key) do
+        choice(id).progress key
+      end
+
+      def download(id, key) do
+        choice(id).download key
+      end
+
+      defdelegate remote_upload(id, key), to: __MODULE__, as: :download
+
+      def findfile(id, key) do
+        choice(id).findfile key
+      end
+
+      def removefile(id, key) do
+        r = choice(id).removefile key
+        State.del id
+        r
+      end
+
+      def abledisk do
+        Enum.map @clients, & {&1, &1.abledisk!}
+      end
+
+      def extractors! do
+        choice().extractors!
+      end
+
+      def exists?(client, id) do
+        client.endpoint == State.get(id)
+      end
+
+      def choice do
         Enum.random @clients
+      end
+      def choice(id) when is_binary(id) and byte_size(id) > 0 do
+        endpoint = State.get id
+
+        case Enum.filter(@clients, & &1.endpoint == endpoint) do
+          [client] ->
+            client
+          _        ->
+            client = choice()
+            State.set id, client.endpoint
+            client
+        end
       end
 
       defoverridable Module.definitions_in(__MODULE__)
     end
   end
-
 end

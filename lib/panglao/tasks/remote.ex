@@ -13,7 +13,7 @@ defmodule Panglao.Tasks.Remote do
         limit: 100
 
     Enum.each Repo.all(queryable), fn object ->
-      with {:ok, %{body: %{"status" => "finished"}}} <- Cheapcdn.progress(object.remote),
+      with {:ok, %{body: %{"status" => "finished"}}} <- Cheapcdn.progress(object.url, object.remote),
            {:ok, object} <- pending(object) do
 
         # Convert

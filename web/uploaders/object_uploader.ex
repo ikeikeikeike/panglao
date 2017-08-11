@@ -91,7 +91,7 @@ defmodule Panglao.ObjectUploader do
     filename = Path.basename url({file, scope}, version)
     params = Map.merge %{"object" => filename}, params
 
-    with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(params),
+    with {:ok, %{body: key}} when is_binary(key) <- Cheapcdn.gateway(scope.url, params),
          uri when is_binary(uri) <- "#{url({file, scope}, version)}?cdnkey=#{key}" do
       uri
     else _error ->

@@ -15,8 +15,9 @@ defmodule Panglao.Object.Remote do
     end
   end
   defp upfile(params, object \\ %Object{}) do
+    url = params["remote"]
     precheck =
-      case Cheapcdn.info(params["remote"]) do
+      case Cheapcdn.info(url, url) do
         {:ok, %HTTPoison.Response{status_code: 200} = r} ->
           r.body
         _ ->
@@ -25,7 +26,7 @@ defmodule Panglao.Object.Remote do
 
     Repo.transaction fn  ->
       with %{"root" => _} <- precheck,
-           {:ok, %{body: %{"root" => body}}} <- Cheapcdn.remote_upload(params["remote"]),
+           {:ok, %{body: %{"root" => body}}} <- Cheapcdn.remote_upload(url, url),
            {:ok, object} <- upsert_object(object, params, body) do
 
         Exq.enqueue Exq, "default", Tasks.Remote2, [object.id]

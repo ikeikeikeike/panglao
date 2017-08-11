@@ -11,18 +11,21 @@ defmodule Panglao.Tasks.Remove do
   end
 
   def perform(:disksize) do
-    with {:ok, %{body: %{"root" => false}}} <- Cheapcdn.abledisk do
-      from(q in Object, where: q.stat != "REMOVED", order_by: :id, limit: 200)
-      |> Repo.all
-      |> remove()
+    Enum.each Cheapcdn.abledisk, fn {client, resp} ->
+      with %{body: %{"root" => false}} <- resp do
+        from(q in Object, where: q.stat != "REMOVED", order_by: :id, limit: 200)
+        |> Repo.all
+        |> Enum.filter(&Cheapcdn.exists?(client, &1.url))
+        |> remove()
+      end
     end
   end
 
   defp remove(objects) do
-    Enum.map objects, fn object ->
+    Enum.each objects, fn object ->
       with src when is_binary(src)
                 and byte_size(src) > 0 <- object.src,
-          {:ok, _} <- Cheapcdn.removefile(src) do
+          {:ok, _} <- Cheapcdn.removefile(object.url, src) do
         nil
       end
 

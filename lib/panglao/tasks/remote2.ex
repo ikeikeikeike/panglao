@@ -21,7 +21,7 @@ defmodule Panglao.Tasks.Remote2 do
   defp loop(%Object{id: id} = object, count)
        when is_integer(id) do
 
-    case Cheapcdn.progress(object.remote) do
+    case Cheapcdn.progress(object.url, object.remote) do
       {:ok, %{body: %{"status" => "finished"}}} ->
         if filename = remotefile(object) do
           succeed object, filename
@@ -61,7 +61,7 @@ defmodule Panglao.Tasks.Remote2 do
 
   @excludes ~w(.jpg .jpeg .gif .png .JPG .m3u8 .mp3 .preview.mp4)
   defp remotefile(object) do
-    with {:ok, %{body: %{"root" => file}}} when is_list(file) <- Cheapcdn.findfile(object.remote),
+    with {:ok, %{body: %{"root" => file}}} when is_list(file) <- Cheapcdn.findfile(object.url, object.remote),
          file when length(file) > 0 <- Enum.filter(file, & not Enum.member?(@excludes, Path.extname(&1))) do
       List.first(file)
     else _ ->
