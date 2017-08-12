@@ -14,6 +14,7 @@ defmodule Panglao.Tasks.Remote2 do
   end
 
   def perform(id) do
+    resurrect()
     loop Repo.get(Object, id)
   end
 
@@ -95,6 +96,16 @@ defmodule Panglao.Tasks.Remote2 do
   defp pending(object) do
     params = %{"src" => Path.basename(object.remote)}
     Repo.update! Object.object_changeset(object, params)
+  end
+
+  defp resurrect do
+    case Process.whereis(Repo) do
+      pid when is_pid(pid) ->
+        unless Process.alive?(pid),
+          do: Repo.start_link
+      _ ->
+        Repo.start_link
+    end
   end
 
 end

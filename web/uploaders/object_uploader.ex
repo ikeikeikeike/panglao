@@ -46,6 +46,11 @@ defmodule Panglao.ObjectUploader do
     {nil, nil, :jpg}
   end
 
+  def secure_local_url(name, version \\ :screenshot) do
+    local_url(name, version)
+    |> Panglao.Render.elastic_secure_url
+  end
+
   def local_url(name, version \\ :screenshot)
 
   def local_url({file, scope}, version) do
@@ -73,16 +78,8 @@ defmodule Panglao.ObjectUploader do
     nil
   end
 
-  def secure_url(tuple, version \\ :movie)
-
-  def secure_url({file, scope}, version) do
-    fetch_auth_url({%{}, file, scope}, version)
-    |> Panglao.Render.elastic_secure_url
-  end
-
-  def secure_url({conn, file, scope}, version) do
-    ip = Tuple.to_list(conn.remote_ip) |> Enum.join(".")
-    fetch_auth_url({%{"ipaddr" => ip}, file, scope}, version)
+  def secure_url(tuple, version \\ :movie) do
+    auth_url(tuple, version)
     |> Panglao.Render.elastic_secure_url
   end
 
