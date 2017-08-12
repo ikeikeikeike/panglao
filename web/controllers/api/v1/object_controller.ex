@@ -58,7 +58,7 @@ defmodule Panglao.Api.V1.ObjectController do
 
   defp mp3(conn, obj) do
     arg = {conn, obj.src, obj}
-    json conn, %{src: ObjectUploader.auth_url(arg, :audio)}
+    json conn, %{src: ObjectUploader.secure_url(arg, :audio)}
   end
 
   def preview(conn, %{"id" => _hash} = params) do
@@ -72,7 +72,7 @@ defmodule Panglao.Api.V1.ObjectController do
 
   defp mp4(conn, obj) do
     arg = {conn, obj.src, obj}
-    json conn, %{src: ObjectUploader.auth_url(arg, :preview)}
+    json conn, %{src: ObjectUploader.secure_url(arg, :preview)}
   end
 
   def splash(conn, %{"id" => _hash} = params) do

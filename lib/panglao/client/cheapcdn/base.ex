@@ -159,6 +159,7 @@ defmodule Panglao.Client.Cheapcdn.Base do
         choice(id).findfile key
       end
 
+      # TODO: make sure remove file coz id still not exists in redis
       def removefile(id, key) do
         r = choice(id).removefile key
         State.del id
