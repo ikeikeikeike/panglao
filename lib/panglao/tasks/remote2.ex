@@ -6,15 +6,13 @@ defmodule Panglao.Tasks.Remote2 do
   @tries 50
 
   defp wait(count) when count >= 45 do
-    sec = round :math.pow(count + 15, 2)
-    :timer.sleep sec * 1000   # (X+15)**2 x 5 = 784 mins(5.34 hours)
+    :timer.sleep 900_000  # 15 min x 5 = 75 mins
   end
   defp wait(_count) do
-    :timer.sleep 15_000       # 15 sec x 45 = around 10 ~ 40 mins
+    :timer.sleep 15_000   # 15 sec x 45 = around 10 ~ 40 mins
   end
 
   def perform(id) do
-    resurrect()
     loop Repo.get(Object, id)
   end
 
@@ -97,15 +95,4 @@ defmodule Panglao.Tasks.Remote2 do
     params = %{"src" => Path.basename(object.remote)}
     Repo.update! Object.object_changeset(object, params)
   end
-
-  defp resurrect do
-    case Process.whereis(Repo) do
-      pid when is_pid(pid) ->
-        unless Process.alive?(pid),
-          do: Repo.start_link
-      _ ->
-        Repo.start_link
-    end
-  end
-
 end
