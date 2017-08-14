@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.98"
+    v = "0.2.100"
     File.write! "VERSION", v
     v
   end
@@ -74,6 +74,8 @@ defmodule Panglao.Mixfile do
         :exsyslog,
         :syslog,
         :mogrify,
+        :exjsx,
+        :jsx,
 
         :remote_ip,
         :plug_cloudflare,
@@ -117,6 +119,7 @@ defmodule Panglao.Mixfile do
       {:ex_aws, "~> 1.1"},
       {:arc, "~> 0.7"},
       {:sweet_xml, "~> 0.6"},
+      {:exjsx, "~> 4.0"},
 
       {:exq, "~> 0.8"},
       {:ffmpex, "~> 0.4"},
