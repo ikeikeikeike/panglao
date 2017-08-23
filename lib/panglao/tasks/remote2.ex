@@ -6,7 +6,7 @@ defmodule Panglao.Tasks.Remote2 do
   @tries 50
 
   defp wait(count) when count >= 45 do
-    :timer.sleep 1200_000 # 20 min x 5  = 100 mins
+    :timer.sleep 1_200_000 # 20 min x 5 = 100 mins
   end
   defp wait(_count) do
     :timer.sleep 15_000   # 15 sec x 45 = around 10 ~ 40 mins
@@ -28,6 +28,10 @@ defmodule Panglao.Tasks.Remote2 do
           wait count
           loop object, count + 3
         end
+
+      {:ok, %{body: %{"status" => "crap"}}} ->
+        wait count
+        loop crap(object), count
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
         wait count
@@ -90,6 +94,12 @@ defmodule Panglao.Tasks.Remote2 do
     params = %{"stat" => "WRONG"}
     Repo.update! Object.changeset(object, params)
   end
+
+  defp crap(%{stat: stat} = object) when stat != "CRAP" do
+    params = %{"stat" => "CRAP"}
+    Repo.update! Object.changeset(object, params)
+  end
+  defp crap(object), do: object
 
   defp pending(object) do
     params = %{"src" => Path.basename(object.remote)}

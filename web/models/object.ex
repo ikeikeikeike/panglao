@@ -23,13 +23,13 @@ defmodule Panglao.Object do
   @castable ~w(src name stat slug remote url user_id)a
   @stattypes ~w(
     NONE
-    REMOTE DOWNLOAD WRONG
+    REMOTE DOWNLOAD CRAP WRONG
     PENDING STARTED FAILURE SUCCESS
     REMOVED
   )
 
   def remote?(struct) do
-    struct.stat in ~w(REMOTE DOWNLOAD WRONG)
+    struct.stat in ~w(REMOTE DOWNLOAD CRAP WRONG)
   end
 
   def object?(struct) do
@@ -107,6 +107,11 @@ defmodule Panglao.Object do
     where: q.stat == "SUCCESS"
   end
 
+  def with_crap(query \\ __MODULE__) do
+    from q in query,
+    where: q.stat == "CRAP"
+  end
+
   def with_download(query \\ __MODULE__) do
     from q in query,
     where: q.stat == "DOWNLOAD"
@@ -114,12 +119,12 @@ defmodule Panglao.Object do
 
   def with_remote(query \\ __MODULE__) do
     from q in query,
-    where: q.stat in ~w(REMOTE DOWNLOAD)
+    where: q.stat in ~w(REMOTE CRAP DOWNLOAD)
   end
 
   def with_filer(query \\ __MODULE__) do
     from q in query,
-    where: not q.stat in ~w(NONE REMOTE DOWNLOAD)
+    where: not q.stat in ~w(NONE REMOTE CRAP DOWNLOAD)
   end
 
   @expires Application.get_env(:panglao, :object)[:expires]
