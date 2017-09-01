@@ -13,7 +13,7 @@ defmodule Panglao.Tasks.Remove do
   def perform(:disksize) do
     Enum.each Cheapcdn.abledisk, fn {client, resp} ->
       with %{body: %{"root" => false}} <- resp do
-        from(q in Object, where: q.stat != "REMOVED", order_by: :id, limit: 200)
+        from(q in Object, where: q.stat != "REMOVED", order_by: :updated_at, limit: 200)
         |> Repo.all
         |> Enum.filter(&Cheapcdn.exists?(client, &1.url))
         |> remove()

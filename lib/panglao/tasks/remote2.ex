@@ -9,7 +9,7 @@ defmodule Panglao.Tasks.Remote2 do
     :timer.sleep 1_200_000 # 20 min x 5 = 100 mins
   end
   defp wait(_count) do
-    :timer.sleep 15_000   # 15 sec x 45 = around 10 ~ 40 mins
+    :timer.sleep 15_000   # 15 sec x 45 = around 10 ~ 110 mins
   end
 
   def perform(id) do
@@ -35,7 +35,9 @@ defmodule Panglao.Tasks.Remote2 do
 
       {:ok, %{body: body}} when map_size(body) > 0 ->
         wait count
-        loop object, count + Enum.random([0, 0, 0, 1])
+        loop object, count + Enum.random([
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+        ])
 
       _msg ->
         if count > @tries do
