@@ -4,7 +4,7 @@ defmodule Panglao.RemoteController do
   alias Panglao.{Object, Object.Remote, Client.Cheapcdn}
 
   def index(conn, _params) do
-    objects = Repo.all Object.with_remote
+    objects = RepoReader.all Object.with_remote
     render conn, "index.html", objects: objects
   end
 

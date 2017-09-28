@@ -1,9 +1,9 @@
 defmodule Panglao.Object.Remote do
 
-  alias Panglao.{Repo, Object, Tasks, Client.Cheapcdn}
+  alias Panglao.{Repo, RepoReader, Object, Tasks, Client.Cheapcdn}
 
   def upload(%{"user_id" => user_id, "remote" => remote} = params) do
-    case Repo.get_by(Object, user_id: user_id, url: remote) do
+    case RepoReader.gets_by(Object, user_id: user_id, url: remote) do
       nil ->
         upfile params
       %{stat: "REMOVED"} = object ->

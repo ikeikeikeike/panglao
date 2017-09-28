@@ -71,7 +71,7 @@ defmodule Panglao.AuthController do
   defp auths(nil), do: []
   defp auths(%Panglao.User{} = user) do
     Ecto.assoc(user, :authorizations)
-      |> Repo.all
+      |> RepoReader.all
       |> Enum.map(&(&1.provider))
   end
 

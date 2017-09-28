@@ -47,10 +47,22 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :panglao, Panglao.Repo,
   adapter: Ecto.Adapters.Postgres,
+  hostname: "localhost",
   username: "postgres",
   password: "postgres",
   database: "panglao_dev",
+  pool_size: 10,
+  timeout: 500_000,
+  pool_timeout: 500_000,
+  ownership_timeout: 500_000
+
+# Configure your database
+config :panglao, Panglao.RepoReader,
+  adapter: Ecto.Adapters.Postgres,
   hostname: "localhost",
+  username: "postgres",
+  password: "postgres",
+  database: "panglao_dev",
   pool_size: 10,
   timeout: 500_000,
   pool_timeout: 500_000,

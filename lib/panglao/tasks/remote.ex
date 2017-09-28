@@ -1,7 +1,7 @@
 defmodule Panglao.Tasks.Remote do
   import Ecto.Query
 
-  alias Panglao.{Repo, Object, Tasks, ObjectUploader, Client.Cheapcdn}
+  alias Panglao.{Repo, RepoReader, Object, Tasks, ObjectUploader, Client.Cheapcdn}
 
   require Logger
 
@@ -12,7 +12,7 @@ defmodule Panglao.Tasks.Remote do
         order_by: fragment("RANDOM()"),
         limit: 100
 
-    Enum.each Repo.all(queryable), fn object ->
+    Enum.each RepoReader.all(queryable), fn object ->
       with {:ok, %{body: %{"status" => "finished"}}} <- Cheapcdn.progress(object.url, object.remote),
            {:ok, object} <- pending(object) do
 

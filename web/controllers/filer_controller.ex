@@ -4,7 +4,7 @@ defmodule Panglao.FilerController do
   alias Panglao.{Object, Object.Basic, Tasks}
 
   def index(conn, _params) do
-    objects = Repo.all Object.with_filer
+    objects = RepoReader.all Object.with_filer
     render conn, "index.html", objects: objects
   end
 

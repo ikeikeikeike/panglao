@@ -2,7 +2,7 @@ defmodule Panglao.Tasks.Encode do
   import Panglao.Tasks.Base
   import Ecto.Query, only: [from: 2]
 
-  alias Panglao.{Repo, Object, ObjectUploader}
+  alias Panglao.{Repo, RepoReader, Object, ObjectUploader}
 
   require Logger
 
@@ -27,7 +27,7 @@ defmodule Panglao.Tasks.Encode do
 
   defp encode(queryable) do
     result =
-      Enum.map Repo.all(queryable), fn object ->
+      Enum.map RepoReader.all(queryable), fn object ->
         started object
 
         try do

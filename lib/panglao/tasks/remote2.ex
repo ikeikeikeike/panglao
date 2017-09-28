@@ -1,5 +1,5 @@
 defmodule Panglao.Tasks.Remote2 do
-  alias Panglao.{Repo, Object, Tasks, ObjectUploader, Client.Cheapcdn}
+  alias Panglao.{Repo, RepoReader, Object, Tasks, ObjectUploader, Client.Cheapcdn}
 
   require Logger
 
@@ -13,7 +13,7 @@ defmodule Panglao.Tasks.Remote2 do
   end
 
   def perform(id) do
-    loop Repo.get(Object, id)
+    loop RepoReader.gets(Object, id)
   end
 
   defp loop(object, count \\ 0)

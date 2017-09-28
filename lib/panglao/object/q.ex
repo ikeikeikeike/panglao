@@ -1,9 +1,9 @@
 defmodule Panglao.Object.Q do
-  alias Panglao.{Repo, Object, Hash}
+  alias Panglao.{RepoReader, Object, Hash}
 
   def get!(%{"id" => hash}) do
     with id when not is_nil(id) <- Hash.decrypt(hash),
-         o <- Repo.get!(Object, id) do
+         o <- RepoReader.gets!(Object, id) do
       o
     else _ ->
       raise Ecto.NoResultsError
@@ -11,11 +11,11 @@ defmodule Panglao.Object.Q do
   end
 
   def get!(%{"user_id" => user_id, "url" => url}) do
-    Repo.get_by! Object, user_id: user_id, url: url
+    RepoReader.gets_by!(Object, user_id: user_id, url: url)
   end
 
   def get(%{"user_id" => user_id, "url" => url}) do
-    Repo.get_by(Object, user_id: user_id, url: url) || %Object{}
+    RepoReader.gets_by(Object, user_id: user_id, url: url) || %Object{}
   end
 
 end

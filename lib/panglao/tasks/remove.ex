@@ -2,11 +2,11 @@ defmodule Panglao.Tasks.Remove do
   # import Panglao.Tasks.Base
 
   import Ecto.Query
-  alias Panglao.{Repo, Object, Client.Cheapcdn}
+  alias Panglao.{Repo, RepoReader, Object, Client.Cheapcdn}
 
   def perform do
     Object.with_removable
-    |> Repo.all
+    |> RepoReader.all
     |> remove()
   end
 
@@ -14,7 +14,7 @@ defmodule Panglao.Tasks.Remove do
     Enum.each Cheapcdn.abledisk, fn {client, resp} ->
       with %{body: %{"root" => false}} <- resp do
         from(q in Object, where: q.stat != "REMOVED", order_by: :updated_at, limit: 200)
-        |> Repo.all
+        |> RepoReader.all
         |> Enum.filter(&Cheapcdn.exists?(client, &1.url))
         |> remove()
       end

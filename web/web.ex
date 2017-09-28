@@ -34,7 +34,7 @@ defmodule Panglao.Web do
       alias Guardian.Plug.EnsureAuthenticated
       alias Guardian.Plug.EnsurePermissions
 
-      alias Panglao.Repo
+      alias Panglao.{Repo, RepoReader}
       import Ecto
       import Ecto.Query
 
@@ -50,7 +50,7 @@ defmodule Panglao.Web do
     quote do
       use Phoenix.Controller
 
-      alias Panglao.Repo
+      alias Panglao.{Repo, RepoReader}
       import Ecto
       import Ecto.Query
 
@@ -73,7 +73,7 @@ defmodule Panglao.Web do
       use Phoenix.HTML
       use Phoenix.HTML.SimplifiedHelpers
 
-      alias Phoenix.Repo
+      alias Phoenix.{Repo, RepoReader}
       import Ecto.Query
 
       import Panglao.Router.Helpers
@@ -96,7 +96,7 @@ defmodule Panglao.Web do
     quote do
       use Phoenix.Channel
 
-      alias Panglao.Repo
+      alias Panglao.{Repo, RepoReader}
       import Ecto
       import Ecto.Query
       import Panglao.Gettext
