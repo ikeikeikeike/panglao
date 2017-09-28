@@ -58,3 +58,6 @@ config :panglao, Panglao.Repo,
 
 config :panglao, :object,
   expires: 0  # hours
+
+config :panglao, Panglao.Cron.Caller,
+  {127, 0, 0, 1}

@@ -12,22 +12,22 @@ config :quantum, :panglao,
     # ],
     remove_perform: [
       schedule: "10 * * * *",
-      task: "Panglao.Tasks.Remove.perform",
+      task: "Panglao.Cron.Caller.remove_perform",
       args: []
     ],
     remove_perform_disksize: [
       schedule: "*/5 * * * *",
-      task: "Panglao.Tasks.Remove.perform",
+      task: "Panglao.Cron.Caller.remove_perform_disksize",
       args: [:disksize]
     ],
     cleanup_unses_files: [
       schedule: "*/5 * * * *",
-      task: "Panglao.Tasks.Cleanup.unses_files",
+      task: "Panglao.Cron.Caller.cleanup_unses_files",
       args: []
     ],
     touch_perform: [
       schedule: "* * * * *",
-      task: "Panglao.Tasks.Touch.perform",
+      task: "Panglao.Cron.Caller.touch_perform",
       args: []
     ]
   ]

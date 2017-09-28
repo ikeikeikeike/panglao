@@ -22,7 +22,7 @@ config :quantum, :panglao,
     # ]
     touch_perform: [
       schedule: "* * * * *",
-      task: "Panglao.Tasks.Touch.perform",
+      task: "Panglao.Cron.Caller.touch_perform",
       args: []
     ]
   ]
