@@ -10,6 +10,7 @@ defmodule Panglao do
     children = [
       # Start the Ecto repository
       supervisor(Panglao.Repo, []),
+      supervisor(Panglao.RepoReader, []),
       # Start the endpoint when the application starts
       supervisor(Panglao.Endpoint, []),
       # Start your own worker by calling: Panglao.Worker.start_link(arg1, arg2, arg3)
