@@ -73,3 +73,7 @@ config :panglao, :object,
 
 config :panglao, Panglao.Cron.Caller,
   {127, 0, 0, 1}
+
+config :panglao, :redis,
+  lock_in_task: "redis://127.0.0.1:6379/2",
+  cheapcdn: "redis://127.0.0.1:6379/3"

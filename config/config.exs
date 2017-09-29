@@ -49,10 +49,6 @@ config :logger, :exsyslog_json,
 config :ua_inspector,
   database_path: Path.join(File.cwd!, "config/ua_inspector")
 
-config :panglao, :redis,
-  lock_in_task: "redis://127.0.0.1:6379/2",
-  cheapcdn: "redis://127.0.0.1:6379/3"
-
 config :panglao, :convert,
   encode: false
 
