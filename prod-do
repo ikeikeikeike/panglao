@@ -4,6 +4,7 @@ VERSION=`cat VERSION`
 USER=`cat USER`
 BUILDING=`cat BUILDING`
 PRODUCTION=`cat PRODUCTION`
+INNER1=`cat INNER1`
 
 deploy() {
     build
@@ -52,6 +53,7 @@ upload() {
     # upload staging
     # rsync -avr --stats _build/prod/rel ${USER}@${PRODUCTION}:~/
     scp _build/prod/rel/panglao/releases/${VERSION}/panglao.tar.gz ${USER}@${PRODUCTION}:~/rel/
+    scp _build/prod/rel/panglao/releases/${VERSION}/panglao.tar.gz ${USER}@${INNER1}:~/rel/
 }
 
 upgrade() {
@@ -59,12 +61,16 @@ upgrade() {
     ssh ${USER}@${PRODUCTION} "(cd src/panglao; hg pull ; hg up -C)"
     ssh ${USER}@${PRODUCTION} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
     # ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao upgrade ${VERSION}"
+
+    ssh ${USER}@${INNER1} "(cd src/panglao; hg pull ; hg up -C)"
+    ssh ${USER}@${INNER1} "(cd rel && tar zxf panglao.tar.gz && ln -fns lib/panglao-${VERSION}/priv/static)"
 }
 
 restartsrv() {
     set +e
 
     ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao restart"
+    ssh ${USER}@${INNER1} "sh rel/bin/panglao restart"
 
     #OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
     #echo;echo "PRODUCTION OUT: $OUT"
@@ -86,12 +92,17 @@ remove() {
     rsync -avr --delete --stats _build/prod/rel/panglao/releases ${USER}@${BUILDING}:~/src/panglao/_build/prod/rel/panglao/
     # rsync -avr --delete --stats _build/prod/rel/panglao/lib      ${USER}@${PRODUCTION}:~/rel/panglao/
     # rsync -avr --delete --stats _build/prod/rel/panglao/releases ${USER}@${PRODUCTION}:~/rel/panglao/
+
+    ssh ${USER}@${PRODUCTION} "find ~/rel | grep 'releases\|panglao' | grep $1 | xargs rm -rf"
+    ssh ${USER}@${INNER1}     "find ~/rel | grep 'releases\|panglao' | grep $1 | xargs rm -rf"
 }
 
 deployed() {
     # upgrade
     echo "PRODUCTION"
     ssh ${USER}@${PRODUCTION} "ls -t rel/releases"
+    echo "INNER1"
+    ssh ${USER}@${INNER1}     "ls -t rel/releases"
 }
 
 case "$1" in
