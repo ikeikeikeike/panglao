@@ -14,7 +14,7 @@ defmodule Panglao.Mixfile do
   end
 
   defp version do
-    v = "0.2.110"
+    v = "0.2.112"
     File.write! "VERSION", v
     v
   end
