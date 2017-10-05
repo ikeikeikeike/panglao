@@ -69,8 +69,8 @@ upgrade() {
 restartsrv() {
     set +e
 
-    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao restart"
     ssh ${USER}@${INNER1} "sh rel/bin/panglao restart"
+    ssh ${USER}@${PRODUCTION} "sh rel/bin/panglao restart"
 
     #OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/bin/panglao' | grep -v 'grep'"`
     #echo;echo "PRODUCTION OUT: $OUT"
