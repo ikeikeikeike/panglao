@@ -43,4 +43,10 @@ defmodule Panglao.Cron.Caller do
     end
   end
 
+  def notify_perform do
+    call fn ->
+      Panglao.Tasks.Notify.perform
+    end
+  end
+
 end

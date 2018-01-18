@@ -18,7 +18,7 @@ config :quantum, :panglao,
     remove_perform_disksize: [
       schedule: "*/5 * * * *",
       task: "Panglao.Cron.Caller.remove_perform_disksize",
-      args: [:disksize]
+      args: []
     ],
     cleanup_unses_files: [
       schedule: "*/5 * * * *",
@@ -28,6 +28,11 @@ config :quantum, :panglao,
     touch_perform: [
       schedule: "* * * * *",
       task: "Panglao.Cron.Caller.touch_perform",
+      args: []
+    ],
+    notify_perform: [
+      schedule: "35 20 * * * ",  # UTC: 20:35
+      task: "Panglao.Cron.Caller.notify_perform",
       args: []
     ]
   ]
