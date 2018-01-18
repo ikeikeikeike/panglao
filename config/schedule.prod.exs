@@ -31,7 +31,7 @@ config :quantum, :panglao,
       args: []
     ],
     notify_perform: [
-      schedule: "35 20 * * * ",  # UTC: 20:35
+      schedule: "35 20 * * *",  # UTC: 20:35
       task: "Panglao.Cron.Caller.notify_perform",
       args: []
     ]
