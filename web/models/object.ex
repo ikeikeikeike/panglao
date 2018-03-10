@@ -132,6 +132,6 @@ defmodule Panglao.Object do
     expires = -(@expires)
     from q in query,
     where: q.stat != "REMOVED"
-       and q.inserted_at < datetime_add(^Ecto.DateTime.utc, ^expires, "hour")
+       and q.updated_at < datetime_add(^Ecto.DateTime.utc, ^expires, "hour")
   end
 end
